@@ -11,7 +11,7 @@ const mockData = [
 
 function SignalData() {
     return (
-      <div className="data">
+      <div className="data content">
         <h1>Signal Data</h1>
         <DataTable 
           headers={mockHeaders}

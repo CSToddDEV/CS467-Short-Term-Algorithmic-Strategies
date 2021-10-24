@@ -2,7 +2,7 @@ import React from 'react';
 
 function Unsubscribe() {
     return (
-      <div className="unsubscribe">
+      <div className="unsubscribe content">
         <h1>Unsubscribe</h1>
         <h3>Enter an email or phone number to unsubscribe</h3>
         <UnsubscribeForm />

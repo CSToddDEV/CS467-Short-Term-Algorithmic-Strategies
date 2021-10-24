@@ -2,7 +2,7 @@ import React from 'react';
 
 function Subscribe() {
     return (
-      <div className="subscribe">
+      <div className="subscribe content">
         <h1>Subscribe</h1>
         <h3>Enter an email and/or phone number (text) to receive buy/sell signals</h3>
         <SubscribeForm />
