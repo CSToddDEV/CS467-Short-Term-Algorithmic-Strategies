@@ -3,10 +3,20 @@ html, body, #root, .App {
   margin: 0;
 }
 
+html {
+  overflow: hidden;
+}
+
+body {
+  overflow: auto;
+}
+
 a {
   text-decoration: none;
   padding:5px 35px;
-  margin: 0 auto;
+  margin: 0px auto;
+  color: #184d18;
+  font-weight: bold;
 }
 
 table {
@@ -30,13 +40,14 @@ table td, table th {
 }
 
 .nav {
-  margin: 0;
-  padding: 0;
+  margin: 0px;
+  padding: 20px 0px 5px 10px;
+  background-color: #aff799;
 }
 
 .nav li {
   display: inline;
-  margin: 0;
+  padding: 5px 0px;
 }
 
 .content {
@@ -47,6 +58,10 @@ table td, table th {
   transform: translate(-50%, -50%);
 }
 
+.navUnit:hover {
+  background-color: #61d463;
+}
+
 [aria-current] {
-  border-bottom: 2px solid blue;
+  border-bottom: 4px solid #138516;
 }
