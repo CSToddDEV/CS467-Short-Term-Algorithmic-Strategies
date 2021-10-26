@@ -8,11 +8,11 @@ import SignalData from './SignalData';
 function Main() {
     return (
       <Switch>
-          <Route exact path='/' component={Home}></Route>
-          <Route exact path='/about' component={About}></Route>
-          <Route exact path='/subscribe' component={Subscribe}></Route>
-          <Route exact path='/unsubscribe' component={Unsubscribe}></Route>
-          <Route exact path='/data' component={SignalData}></Route>
+          <Route exact path='/3stat' component={Home}></Route>
+          <Route exact path='/3stat/about' component={About}></Route>
+          <Route exact path='/3stat/subscribe' component={Subscribe}></Route>
+          <Route exact path='/3stat/unsubscribe' component={Unsubscribe}></Route>
+          <Route exact path='/3stat/data' component={SignalData}></Route>
       </Switch>
     );
   }
