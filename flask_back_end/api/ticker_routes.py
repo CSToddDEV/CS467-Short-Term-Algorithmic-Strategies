@@ -1,12 +1,12 @@
-# flask resources
+# Flask Resources
 from flask import Response, request, jsonify
 from flask_restful import Resource
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
-# local resources
-from models.users import Users
-from api.errors import forbidden_request
-from models.tickers import Ticker
+# Local Resources
+from ..models.users import Users
+from ..api.errors import forbidden_request
+from ..models.tickers import Ticker
 
 
 class TickersApi(Resource):
@@ -15,7 +15,7 @@ class TickersApi(Resource):
     :Example:
     >>> from flask import Flask
     >>> from flask_restful import Api
-    >>> from app import default_config
+    >>> from flask_back_end.app import default_config
 
 
     # Create flask app, config, and resftul api, then add TickersApi route
@@ -53,7 +53,7 @@ class TickerApi(Resource):
     :Example:
     >>> from flask import Flask
     >>> from flask_restful import Api
-    >>> from app import default_config
+    >>> from flask_back_end.app import default_config
 
 
     # Create flask app, config, and resftul api, then add TickerApi route
@@ -63,7 +63,7 @@ class TickerApi(Resource):
     >>> api.add_resource(TickerApi, '/ticker/<ticker_id>')
     """
     @jwt_required()
-    def get(self, ticker_id:str):
+    def get(self, ticker_id: str):
         """
         GET response method for single documents in ticker collection.
         :return: JSON object
@@ -72,7 +72,7 @@ class TickerApi(Resource):
         return jsonify({'result': output})
 
     @jwt_required()
-    def put(self, ticker_id:str):
+    def put(self, ticker_id: str):
         """
         PUT response method for updating a specific ticker.
         JSON Web Token is required.

@@ -1,15 +1,16 @@
-# Flask Imports
+# External Resources
+import os
+
+# Flask Resources
 from flask import Flask, app
 from flask_restful import Api
 from flask_jwt_extended import JWTManager
 from flask_mongoengine import MongoEngine
 
-# Local Imports
+# Local Resources
 from api.route_init import initialize_routes
 from KEYS_AND_CONSTANTS import DB_NAME, HOST, PORT, USERNAME, PASSWORD, JWT_KEY
 
-# External Imports
-import os
 
 default_config = {'MONGODB_SETTINGS': {
     'db': DB_NAME,

@@ -1,37 +1,31 @@
-# flask resources
-from flask_bcrypt import generate_password_hash, check_password_hash
-
-# mongodb resources #
-###
-from mongoengine import(Document,
-                        EmbeddedDocument,
-                        EmbeddedDocumentField,
-                        ListField,
-                        StringField,
-                        EmailField,
-                        BooleanField,
-                        ReferenceField)
-
-# Local resources
-from models.tickers import Ticker
-
 # External Resources
 import re
+
+# Flask Resources
+from flask_bcrypt import generate_password_hash, check_password_hash
+
+# Mongo Resources
+from mongoengine import Document, EmbeddedDocument, EmbeddedDocumentField, ListField, StringField, EmailField, \
+    BooleanField, ReferenceField
+
+# Local Resources
+from ..models.tickers import Ticker
 
 
 class Access(EmbeddedDocument):
     """Custom EmbeddedDocument to set user authorizations.
     
-    :param user: boolean to signifiy if user is a user
+    :param user: boolean to signify if user is a user
     :param admin" boolean to signify if user is an admin
     """
     user = BooleanField(default=True)
     admin = BooleanField(default=True)
-    
+
+
 class PhoneField(StringField):
     """Custom StringField to verify phone numbers
     
-    US Phone Number that accepts a dot, space, daash, forward slash between numbers.
+    US Phone Number that accepts a dot, space, dash, forward slash between numbers.
     Will accept a 1 or 0 in front. Area code is not required
     """
     REGEX = re.compile(r"((\(\d{3}\)?)|(\d{3}))([-\s./]?)(\d{3})([-\s./]?)(\d{4})")
@@ -59,12 +53,12 @@ class Users(Document):
     phone = PhoneField()
 
     def generate_pw_hash(self):
-        self.password=generate_password_hash(password=self.password).decode('utf-8')
+        self.password = generate_password_hash(password=self.password).decode('utf-8')
 
     # From BCrypt documentation
     generate_password_hash.__doc__ = generate_password_hash.__doc__
 
-    def check_pw_hash(self, password:str) -> bool:
+    def check_pw_hash(self, password: str) -> bool:
         return check_password_hash(pw_hash=self.password, password=password)
 
     # From BCrypt documentation

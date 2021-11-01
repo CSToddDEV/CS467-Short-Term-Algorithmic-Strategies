@@ -1,11 +1,11 @@
-# flask resources
+# Flask Resources
 from flask import Response, request, jsonify
 from flask_restful import Resource
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
-# local resources
-from models.users import Users
-from api.errors import forbidden_request
+# Local Resources
+from ..models.users import Users
+from ..api.errors import forbidden_request
 
 
 # noinspection PyCompatibility
@@ -15,7 +15,7 @@ class UsersApi(Resource):
     :Example:
     >>> from flask import Flask
     >>> from flask_restful import Api
-    >>> from app import default_config
+    >>> from flask_back_end.app import default_config
 
 
     # Create flask app, config, and resftul api, then add UsersApi route
@@ -64,7 +64,7 @@ class UserApi(Resource):
     :Example:
     >>> from flask import Flask
     >>> from flask_restful import Api
-    >>> from app import default_config
+    >>> from flask_back_end.app import default_config
 
 
     # Create flask app, config, and resftul api, then add UserApi route

@@ -1,6 +1,7 @@
-# mongdb resources
+# Mongo Resources
 from mongoengine import Document, StringField, FloatField, DateTimeField
 from datetime import datetime
+
 
 class Ticker(Document):
     """
@@ -15,7 +16,7 @@ class Ticker(Document):
     :Example:
 
     >>> import mongoengine
-    >>> from app import default_config
+    >>> from flask_back_end.app import default_config
 
     >>> mongoengine.connect(**default_config["MONGODB_SETTINGS"])
     MongoClient(host=['localhost:27017'], document_class=dict, tz_aware=False, connect=True, read_preference=Primary())

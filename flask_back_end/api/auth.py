@@ -1,14 +1,14 @@
-# flask resources
+# External Resources
+import datetime
+
+# Flask Resources
 from flask import Response, request, jsonify
 from flask_restful import Resource
 from flask_jwt_extended import create_access_token, create_refresh_token
 
-# local resources
-from models.users import Users
-from api.errors import unauthorized_user
-
-# external resources
-import datetime
+# Local Resources
+from ..models.users import Users
+from ..api.errors import unauthorized_user
 
 
 class RegisterUserApi(Resource):
@@ -17,7 +17,7 @@ class RegisterUserApi(Resource):
     :Example:
     >>> from flask import Flask
     >>> from flask_restful import Api
-    >>> from app import default_config
+    >>> from flask_back_end.app import default_config
 
 
     # Create the flask app and resftul api
@@ -45,7 +45,7 @@ class LoginApi(Resource):
     :Example:
     >>> from flask import Flask
     >>> from flask_restful import Api
-    >>> from app import default_config
+    >>> from flask_back_end.app import default_config
     >>> app = Flask(__name__)
     >>> app.config.update(default_config)
     >>> api = Api(app=app)
