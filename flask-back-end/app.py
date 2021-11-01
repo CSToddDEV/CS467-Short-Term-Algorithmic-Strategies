@@ -6,18 +6,19 @@ from flask_mongoengine import MongoEngine
 
 # Local Imports
 from api.route_init import initialize_routes
+from KEYS_AND_CONSTANTS import DB_NAME, HOST, PORT, USERNAME, PASSWORD, JWT_KEY
 
 # External Imports
 import os
 
 default_config = {'MONGODB_SETTINGS': {
-    'db': 'test_db',
-    'host': 'localhost',
-    'port': 27017,
-    'username': 'admin',
-    'password': 'password',
+    'db': DB_NAME,
+    'host': HOST,
+    'port': PORT,
+    'username': USERNAME,
+    'password': PASSWORD,
     'authentication_source': 'admin'},
-    'JWT_SECRET_KEY': 'SecretKey'}
+    'JWT_SECRET_KEY': JWT_KEY}
 
 
 def create_flask_app(config: dict = None) -> app.Flask:
