@@ -36,7 +36,7 @@ class Universe:
                 data = a.Data(self.get_current_equity(), self.get_weights())
                 data.pull_close()
                 ticker_data = data.get_data()
-                self.update_signals(self.buy_sell_signals(self.get_current_equity(), "SELL", 0, ticker_data["daily_open"],
+                self.update_signals(self.buy_sell_signals("SELL", self.get_current_equity(), 0, ticker_data["daily_open"],
                                                           ticker_data["daily_close"],
                                                           datetime.date.today().strftime("%A %d. %B %Y")))
                 self.set_new_focus()
