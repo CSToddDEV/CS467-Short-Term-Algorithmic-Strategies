@@ -53,7 +53,7 @@ class Universe:
         """
         client = pymongo.MongoClient()
         db = client["3STAT"]
-        column = db["Focus"]
+        column = db["focus"]
         self.set_old_focus(column.find_one()["current_focus"])
 
         return column.find_one()["current_focus"]
@@ -64,7 +64,7 @@ class Universe:
         :return: new_focus
         """
         # Get all the tickers we are tracking
-        universe = w.universe2
+        universe = w.universe3
         new_focus = None
 
         # Cycle through the tickers in the Universe and choose the next one to focus on
@@ -127,7 +127,7 @@ class Universe:
         """
         client = pymongo.MongoClient()
         db = client["3STAT"]
-        column = db["Focus"]
+        column = db["focus"]
 
         old_equity = {"current_focus": self.get_old_focus()}
         new_equity = {"$set": {"current_focus": equity}}
@@ -169,6 +169,6 @@ class Universe:
         """
         client = pymongo.MongoClient()
         db = client["3STAT"]
-        column = db["Signals"]
+        column = db["signals"]
 
         column.insert_one(signals)

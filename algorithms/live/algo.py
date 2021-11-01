@@ -214,7 +214,7 @@ class Algorithm:
         """
         client = pymongo.MongoClient()
         db = client["3STAT"]
-        column = db["Signals"]
+        column = db["signals"]
 
         column.insert_one(signals)
 

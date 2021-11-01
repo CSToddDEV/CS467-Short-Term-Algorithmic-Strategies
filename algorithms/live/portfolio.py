@@ -41,7 +41,7 @@ class Portfolio:
         portfolio = {}
         client = pymongo.MongoClient()
         db = client["3STAT"]
-        column = db["Portfolio"]
+        column = db["portfolio"]
 
         # If a portfolio has not been recorded yet
         if column.count() == 0:
@@ -65,7 +65,7 @@ class Portfolio:
         """
         client = pymongo.MongoClient()
         db = client["3STAT"]
-        column = db["Portfolio"]
+        column = db["portfolio"]
 
         # Update Database
         for resolution in new_weights.keys():
