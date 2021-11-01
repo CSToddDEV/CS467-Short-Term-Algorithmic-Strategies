@@ -24,12 +24,12 @@ class TickersApi(Resource):
     >>> api = Api(app=app)
     >>> api.add_resource(TickersApi, '/api/tickers')
     """
-    #@jwt_required
+    @jwt_required()
     def get(self):
         output = Ticker.objects()
         return jsonify({'result': output})
 
-    #@jwt_required
+    @jwt_required()
     def post(self) -> Response:
         """
         POST response method for creating a Ticker object.
@@ -37,10 +37,9 @@ class TickersApi(Resource):
         Authorization is required: Access(admin=true)
         :return: JSON object
         """
-        #authorized: bool = Users.objects.get(id=get_jwt_identity()).access.admin
-        authorized = True
+        authorized: bool = Users.objects.get(id=get_jwt_identity()).access.admin
         if authorized:
-            data = request.json()
+            data = request.get_json()
             post_data = Ticker(**data).save()
             output = {'id': str(post_data.id)}
             return jsonify({'result': output})
@@ -63,7 +62,7 @@ class TickerApi(Resource):
     >>> api = Api(app=app)
     >>> api.add_resource(TickerApi, '/ticker/<ticker_id>')
     """
-    @jwt_required
+    @jwt_required()
     def get(self, ticker_id:str):
         """
         GET response method for single documents in ticker collection.
@@ -72,7 +71,7 @@ class TickerApi(Resource):
         output = Ticker.objects.get(id=ticker_id)
         return jsonify({'result': output})
 
-    @jwt_required
+    @jwt_required()
     def put(self, ticker_id:str):
         """
         PUT response method for updating a specific ticker.
@@ -84,7 +83,7 @@ class TickerApi(Resource):
         put_user = Ticker.objects(id=ticker_id).update(**data)
         return jsonify({'result': put_user})
 
-    @jwt_required
+    @jwt_required()
     def delete(self, user_id: str):
         """
          DELETE response method for deleting single ticker.

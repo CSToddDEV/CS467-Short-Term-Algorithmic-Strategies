@@ -7,6 +7,8 @@ from flask_mongoengine import MongoEngine
 # Local Imports
 from api.route_init import initialize_routes
 
+# External Imports
+import os
 
 default_config = {'MONGODB_SETTINGS': {
     'db': 'test_db',
@@ -14,7 +16,8 @@ default_config = {'MONGODB_SETTINGS': {
     'port': 27017,
     'username': 'admin',
     'password': 'password',
-    'authentication_source': 'admin'}}
+    'authentication_source': 'admin'},
+    'JWT_SECRET_KEY': 'SecretKey'}
 
 
 def create_flask_app(config: dict = None) -> app.Flask:
@@ -36,6 +39,13 @@ def create_flask_app(config: dict = None) -> app.Flask:
     # Configure
     config = default_config if config is None else config
     flask_app.config.update(config)
+
+    if 'MONGODB_URI' in os.environ:
+        flask_app.config['MONGODB_SETTINGS'] = {'host': os.environ['MONGODB_URI'],
+                                                'retryWrites': False}
+
+    if 'JWT_SECRET_KEY' in os.environ:
+        flask_app.config['JWT_SECRET_KEY'] = os.environ['JWT_SECRET_KEY']
 
     # initialize api and routes
     api = Api(app=flask_app)

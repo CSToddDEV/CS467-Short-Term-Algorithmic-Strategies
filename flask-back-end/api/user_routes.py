@@ -24,7 +24,8 @@ class UsersApi(Resource):
     >>> api = Api(app=app)
     >>> api.add_resource(UsersApi, '/user/')
     """
-    @jwt_required
+
+    @jwt_required()
     def get(self) -> Response:
         """
         GET response method for acquiring all user data.
@@ -40,7 +41,7 @@ class UsersApi(Resource):
         else:
             return forbidden_request()
 
-    @jwt_required
+    @jwt_required()
     def delete(self) -> Response:
         """
         DELETE response method for deleting ALL users.
@@ -72,7 +73,7 @@ class UserApi(Resource):
     >>> api = Api(app=app)
     >>> api.add_resource(UserApi, '/user/<user_id>')
     """
-    @jwt_required
+    @jwt_required()
     def get(self, user_id: str) -> Response:
         """
         GET response method for acquiring single user data.
@@ -88,7 +89,7 @@ class UserApi(Resource):
         else:
             return forbidden_request()
 
-    @jwt_required
+    @jwt_required()
     def put(self, user_id: str) -> Response:
         """
         PUT response method for updating a user.
@@ -106,7 +107,7 @@ class UserApi(Resource):
         else:
             return forbidden_request()
 
-    @jwt_required
+    @jwt_required()
     def post(self) -> Response:
         """
         POST response method for creating user.
@@ -124,7 +125,7 @@ class UserApi(Resource):
         else:
             return forbidden_request()
 
-    @jwt_required
+    @jwt_required()
     def delete(self, user_id: str) -> Response:
         """
         DELETE response method for deleting user.
