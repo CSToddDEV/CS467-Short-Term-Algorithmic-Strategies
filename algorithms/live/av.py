@@ -10,6 +10,7 @@ class Data:
     """
     3STAT class for communicating with Alpha Vantage API
     """
+
     def __init__(self, ticker, weights):
         self._weights = weights
         self._api_key = key
@@ -67,8 +68,12 @@ class Data:
                 data = returned.json()
 
                 # Add to Dictionary eg. {3: 126.0467}
-                most_recent = list(data["Technical Analysis: SMA"])[0]
-                sma_close[resolution] = float(data["Technical Analysis: SMA"][most_recent]["SMA"])
+                if "Technical Analysis: SMA" in data.keys():
+                    most_recent = list(data["Technical Analysis: SMA"])[0]
+                    sma_close[resolution] = float(data["Technical Analysis: SMA"][most_recent]["SMA"])
+                else:
+                    sma_close[resolution] = 999999
+
                 time.sleep(15)
 
         self.set_data("sma_close", sma_close)
@@ -84,9 +89,12 @@ class Data:
         data = returned.json()
 
         # Add to Dictionary eg. {3: 126.0467}
-        most_recent = list(data["Technical Analysis: SMA"])[0]
-        time.sleep(15)
-        return float(data["Technical Analysis: SMA"][most_recent]["SMA"])
+        if "Technical Analysis: SMA" in data.keys():
+            most_recent = list(data["Technical Analysis: SMA"])[0]
+            time.sleep(15)
+            return float(data["Technical Analysis: SMA"][most_recent]["SMA"])
+        else:
+            return 999999
 
     def pull_moving_avg_low(self):
         """
@@ -102,8 +110,12 @@ class Data:
                 data = returned.json()
 
                 # Add to Dictionary eg. {3: 126.0467}
-                most_recent = list(data["Technical Analysis: SMA"])[0]
-                sma_low[resolution] = float(data["Technical Analysis: SMA"][most_recent]["SMA"])
+                if "Technical Analysis: SMA" in data.keys():
+                    most_recent = list(data["Technical Analysis: SMA"])[0]
+                    sma_low[resolution] = float(data["Technical Analysis: SMA"][most_recent]["SMA"])
+                else:
+                    sma_low[resolution] = 0
+
                 time.sleep(15)
 
         self.set_data("sma_low", sma_low)
@@ -119,9 +131,11 @@ class Data:
         data = returned.json()
 
         # Add to Dictionary eg. {3: 126.0467}
-        most_recent = list(data["Technical Analysis: BBANDS"])[0]
-
-        self.set_data("bbands_low", float(data["Technical Analysis: BBANDS"][most_recent]["Real Lower Band"]))
+        if "Technical Analysis: BBANDS" in data.keys():
+            most_recent = list(data["Technical Analysis: BBANDS"])[0]
+            self.set_data("bbands_low", float(data["Technical Analysis: BBANDS"][most_recent]["Real Lower Band"]))
+        else:
+            self.set_data("bbands_low", 0)
 
     def pull_close(self):
         """
@@ -134,15 +148,21 @@ class Data:
         data = returned.json()
 
         # Add to Dictionary eg. {3: 126.0467}
-        most_recent = list(data["Time Series (Daily)"])[0]
+        if "Time Series (Daily)" in data.keys():
+            most_recent = list(data["Time Series (Daily)"])[0]
 
-        self.set_data("daily_close", float(data["Time Series (Daily)"][most_recent]["4. close"]))
+            self.set_data("daily_close", float(data["Time Series (Daily)"][most_recent]["4. close"]))
+            self.set_data("daily_open", float(data["Time Series (Daily)"][most_recent]["1. open"]))
+
+        else:
+            self.set_data("daily_close", 0)
+            self.set_data("daily_open", 0)
 
     # Other Functions
     def build_url(self, function, ticker, interval, period, series_type):
         """
         Builds URL for AlphaVantage call
-        
+
         :param function: technical indicator
         :param ticker: equity to get info on
         :param interval: 60min, daily, weekly, monthly
@@ -184,5 +204,5 @@ class Data:
         self.pull_close()
         print(self.get_data())
 
-
-Data("TQQQ", w.weight_3).test_api()
+#
+# Data("TQQQ", w.weight_3).test_api()

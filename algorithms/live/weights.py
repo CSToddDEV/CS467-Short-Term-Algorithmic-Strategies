@@ -62,3 +62,9 @@ universe1 = [
     "UDOW",
     "SOXL"
 ]
+
+universe3 = [
+    "TQQQ",
+    "UPRO",
+    "TNA"
+]
