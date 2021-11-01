@@ -9,6 +9,7 @@ function Navigation() {
               <li class="navUnit"><NavLink exact activeClassName="selectedLink" class="navLink" to='/3stat/subscribe'>Subscribe</NavLink></li>
               <li class="navUnit"><NavLink exact activeClassName="selectedLink" class="navLink" to='/3stat/unsubscribe'>Unsubscribe</NavLink></li>
               <li class="navUnit"><NavLink exact activeClassName="selectedLink" class="navLink" to='/3stat/data'>Signal Data</NavLink></li>
+              <li class="navUnit"><NavLink exact activeClassName="selectedLink" class="navLink" to='/3stat/portfolio'>Portfolio</NavLink></li>
           </ul>
       </nav>
     );
