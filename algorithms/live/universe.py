@@ -51,7 +51,7 @@ class Universe:
         Returns current equity in focus from DB
         :return: current_equity
         """
-        client = pymongo.MongoClient(host=HOST, port=PORT, username=USERNAME, password=PASSWORD)
+        client = pymongo.MongoClient(host=HOST, port=PORT, username=USERNAME, password=PASSWORD, authSource="admin")
         db = client[DB_NAME]
         column = db["focus"]
         self.set_old_focus(column.find_one()["current_focus"])
@@ -125,7 +125,7 @@ class Universe:
         """
         Sets current equity in focus from DB
         """
-        client = pymongo.MongoClient(host=HOST, port=PORT, username=USERNAME, password=PASSWORD)
+        client = pymongo.MongoClient(host=HOST, port=PORT, username=USERNAME, password=PASSWORD, authSource="admin")
         db = client[DB_NAME]
         column = db["focus"]
 
@@ -167,7 +167,7 @@ class Universe:
         """
         Updates the buy/sell signals in the database
         """
-        client = pymongo.MongoClient(host=HOST, port=PORT, username=USERNAME, password=PASSWORD)
+        client = pymongo.MongoClient(host=HOST, port=PORT, username=USERNAME, password=PASSWORD, authSource="admin")
         db = client[DB_NAME]
         column = db["signals"]
 
