@@ -64,7 +64,7 @@ class Universe:
         :return: new_focus
         """
         # Get all the tickers we are tracking
-        universe = w.universe3
+        universe = w.universe2
         new_focus = None
 
         # Cycle through the tickers in the Universe and choose the next one to focus on

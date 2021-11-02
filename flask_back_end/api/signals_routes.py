@@ -4,9 +4,9 @@ from flask_restful import Resource
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 # Local Resources
-from ..models.users import Users
-from ..api.errors import forbidden_request
-from ..models.signals import Signals
+from models.users import Users
+from .errors import forbidden_request
+from models.signals import Signals
 
 
 class SignalsApi(Resource):

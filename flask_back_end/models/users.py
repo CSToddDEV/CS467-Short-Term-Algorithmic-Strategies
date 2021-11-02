@@ -9,7 +9,7 @@ from mongoengine import Document, EmbeddedDocument, EmbeddedDocumentField, ListF
     BooleanField, ReferenceField
 
 # Local Resources
-from ..models.tickers import Ticker
+from .tickers import Ticker
 
 
 class Access(EmbeddedDocument):

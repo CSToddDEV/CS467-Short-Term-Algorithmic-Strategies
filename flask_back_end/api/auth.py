@@ -7,8 +7,8 @@ from flask_restful import Resource
 from flask_jwt_extended import create_access_token, create_refresh_token
 
 # Local Resources
-from ..models.users import Users
-from ..api.errors import unauthorized_user
+from models.users import Users
+from .errors import unauthorized_user
 
 
 class RegisterUserApi(Resource):

@@ -2,9 +2,9 @@
 from flask_restful import Api
 
 # Local Resources
-from ..api.auth import RegisterUserApi, LoginApi
-from ..api.ticker_routes import TickersApi, TickerApi
-from ..api.signals_routes import SignalsApi, SignalApi
+from .auth import RegisterUserApi, LoginApi
+from .ticker_routes import TickersApi, TickerApi
+from .signals_routes import SignalsApi, SignalApi
 
 
 def initialize_routes(api):

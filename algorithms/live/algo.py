@@ -219,5 +219,5 @@ class Algorithm:
         column.insert_one(signals)
 
 
-algo = Algorithm(True)
+algo = Algorithm()
 algo.run()
