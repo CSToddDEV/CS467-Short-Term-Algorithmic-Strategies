@@ -213,7 +213,7 @@ class Algorithm:
         """
         Updates the buy/sell signals in the database
         """
-        client = pymongo.MongoClient(host=HOST, port=PORT, username=USERNAME, password=PASSWORD)
+        client = pymongo.MongoClient(host=HOST, port=PORT, username=USERNAME, password=PASSWORD, authSource="admin")
         db = client[DB_NAME]
         column = db["signals"]
 
