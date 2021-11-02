@@ -21,3 +21,11 @@ nohup: ignoring input
 127.0.0.1 - - [02/Nov/2021 00:05:03] "GET /3stat/signals/ HTTP/1.0" 200 -
 127.0.0.1 - - [02/Nov/2021 00:05:04] "GET /3stat/signals/ HTTP/1.0" 200 -
 127.0.0.1 - - [02/Nov/2021 00:31:54] "GET /3stat/signals/ HTTP/1.0" 200 -
+ * Detected change in '/root/3stat/flask_back_end/KEYS_AND_CONSTANTS.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 740-269-980
+ * Detected change in '/root/3stat/flask_back_end/KEYS_AND_CONSTANTS.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 740-269-980
