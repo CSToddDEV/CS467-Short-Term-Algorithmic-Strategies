@@ -1,7 +1,7 @@
 # 3STAT Algorithm - universe.py
 # Fall 2021 CS 463
 
-from ...flask_back_end.KEYS_AND_CONSTANTS import DB_NAME, HOST, PORT, USERNAME, PASSWORD
+from KEYS_AND_CONSTANTS import DB_NAME, HOST, PORT, USERNAME, PASSWORD
 import pymongo
 import datetime
 import av as a

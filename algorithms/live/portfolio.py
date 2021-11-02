@@ -1,7 +1,7 @@
 # 3STAT Algorithm - portfolio.py
 # Fall 2021 CS 463
 import pymongo
-from ...flask_back_end.KEYS_AND_CONSTANTS import DB_NAME, HOST, PORT, USERNAME, PASSWORD
+from KEYS_AND_CONSTANTS import DB_NAME, HOST, PORT, USERNAME, PASSWORD
 
 
 class Portfolio:

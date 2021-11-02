@@ -1,7 +1,7 @@
 # 3STAT Algorithm - algo.py
 # Fall 2021 CS 463
 
-from flask_back_end.KEYS_AND_CONSTANTS import DB_NAME, HOST, PORT, USERNAME, PASSWORD
+from KEYS_AND_CONSTANTS import DB_NAME, HOST, PORT, USERNAME, PASSWORD
 import portfolio as p
 import universe as u
 import weights as w
