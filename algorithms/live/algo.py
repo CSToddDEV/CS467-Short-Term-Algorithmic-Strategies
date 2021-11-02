@@ -1,6 +1,7 @@
 # 3STAT Algorithm - algo.py
 # Fall 2021 CS 463
 
+from ...flask_back_end.KEYS_AND_CONSTANTS import DB_NAME, HOST, PORT, USERNAME, PASSWORD
 import portfolio as p
 import universe as u
 import weights as w
@@ -212,8 +213,8 @@ class Algorithm:
         """
         Updates the buy/sell signals in the database
         """
-        client = pymongo.MongoClient()
-        db = client["3STAT"]
+        client = pymongo.MongoClient(host=HOST, port=PORT, username=USERNAME, password=PASSWORD)
+        db = client[DB_NAME]
         column = db["signals"]
 
         column.insert_one(signals)

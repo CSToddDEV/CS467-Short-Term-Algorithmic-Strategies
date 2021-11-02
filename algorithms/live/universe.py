@@ -1,7 +1,7 @@
 # 3STAT Algorithm - universe.py
 # Fall 2021 CS 463
 
-
+from ...flask_back_end.KEYS_AND_CONSTANTS import DB_NAME, HOST, PORT, USERNAME, PASSWORD
 import pymongo
 import datetime
 import av as a
@@ -51,8 +51,8 @@ class Universe:
         Returns current equity in focus from DB
         :return: current_equity
         """
-        client = pymongo.MongoClient()
-        db = client["3STAT"]
+        client = pymongo.MongoClient(host=HOST, port=PORT, username=USERNAME, password=PASSWORD)
+        db = client[DB_NAME]
         column = db["focus"]
         self.set_old_focus(column.find_one()["current_focus"])
 
@@ -125,8 +125,8 @@ class Universe:
         """
         Sets current equity in focus from DB
         """
-        client = pymongo.MongoClient()
-        db = client["3STAT"]
+        client = pymongo.MongoClient(host=HOST, port=PORT, username=USERNAME, password=PASSWORD)
+        db = client[DB_NAME]
         column = db["focus"]
 
         old_equity = {"current_focus": self.get_old_focus()}
@@ -167,8 +167,8 @@ class Universe:
         """
         Updates the buy/sell signals in the database
         """
-        client = pymongo.MongoClient()
-        db = client["3STAT"]
+        client = pymongo.MongoClient(host=HOST, port=PORT, username=USERNAME, password=PASSWORD)
+        db = client[DB_NAME]
         column = db["signals"]
 
         column.insert_one(signals)

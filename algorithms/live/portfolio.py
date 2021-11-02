@@ -1,6 +1,7 @@
 # 3STAT Algorithm - portfolio.py
 # Fall 2021 CS 463
 import pymongo
+from ...flask_back_end.KEYS_AND_CONSTANTS import DB_NAME, HOST, PORT, USERNAME, PASSWORD
 
 
 class Portfolio:
@@ -39,8 +40,8 @@ class Portfolio:
         Retrieves current portfolio from MongoDB
         """
         portfolio = {}
-        client = pymongo.MongoClient()
-        db = client["3STAT"]
+        client = pymongo.MongoClient(host=HOST, port=PORT, username=USERNAME, password=PASSWORD)
+        db = client[DB_NAME]
         column = db["portfolio"]
 
         # If a portfolio has not been recorded yet
@@ -63,8 +64,8 @@ class Portfolio:
         :param new_weights:
         :return:
         """
-        client = pymongo.MongoClient()
-        db = client["3STAT"]
+        client = pymongo.MongoClient(host=HOST, port=PORT, username=USERNAME, password=PASSWORD)
+        db = client[DB_NAME]
         column = db["portfolio"]
 
         # Update Database

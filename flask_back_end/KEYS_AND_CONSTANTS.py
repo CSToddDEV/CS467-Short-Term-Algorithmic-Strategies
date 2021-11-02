@@ -5,5 +5,5 @@ JWT_KEY = 'SecretKey'
 DB_NAME = '3STAT'
 HOST = 'localhost'
 PORT = 27017
-USERNAME = ''
-PASSWORD = ''
+USERNAME = 'username'
+PASSWORD = 'password'
