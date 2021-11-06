@@ -1,27 +1,43 @@
 import React from 'react';
+import axios from 'axios';
 
-const mockHeaders = ['Ticker', 'Date-time', 'Sign', 'Price'];
-
-const mockData = [
-  ['TQQQ', '10/8/21 14:43:52', 'BUY', '130.67'],
-  ['UPRO', '10/6/21 10:12:23', 'SELL', '136.31'],
-  ['TQQQ', '10/5/21 15:08:29', 'SELL', '138.05'],
-  ['FAS', '10/5/21 11:57:13', 'BUY', '126.93']
-];
+const dataHeaders = ['Tracked Ticker', 'Date', 'Signal', '% invested'];
 
 function SignalData() {
     return (
       <div className="data content">
         <h1>Signal Data</h1>
         <DataTable 
-          headers={mockHeaders}
-          dataRows={mockData}
+          headers={dataHeaders}
         />
       </div>
     );
 }
 
 class DataTable extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+        signals: [],
+        isLoading: true
+      }
+  }
+
+  async componentDidMount() {
+    axios.get('https://www.cstodd.dev/3stat/signals/')
+      .then( (response) => {
+        console.log("response", response);
+        console.log("data", response.data);
+        this.setState({
+          signals: response.data.result,
+          isLoading: false
+        });
+      })
+      .catch( (error) => {
+        console.log(error);
+      }); 
+  }
+
   generateHeaders() {
     let table_headers = [];
     this.props.headers.forEach(header => {
@@ -34,11 +50,13 @@ class DataTable extends React.Component {
   generateRows() {
     let table_rows = [];
 
-    this.props.dataRows.forEach(dataRow => {
+    this.state.signals.forEach(signalData => {
       let newRow = [];
-      dataRow.forEach(item => {
-        newRow.push(<td>{item}</td>);
-      });
+      newRow.push(<td>{signalData.ticker}</td>);
+      newRow.push(<td>{signalData.date}</td>);
+      newRow.push(<td>{signalData.signal}</td>);
+      newRow.push(<td>{signalData.total_invested + "%"}</td>);
+      
       table_rows.push(<tr>{newRow}</tr>);
     });
 
@@ -46,15 +64,21 @@ class DataTable extends React.Component {
   }
 
   render() {
-    let table_headers = this.generateHeaders();
-    let table_rows = this.generateRows();
+    if (this.state.isLoading) {
+      return (
+        <p>Data is loading...</p>
+      );
+    } else {
+      let table_headers = this.generateHeaders();
+      let table_rows = this.generateRows();
 
-    return (
-      <table>
-        <thead><tr>{table_headers}</tr></thead>
-        <tbody>{table_rows}</tbody>
-      </table>
-    );
+      return (
+        <table>
+          <thead><tr>{table_headers}</tr></thead>
+          <tbody>{table_rows}</tbody>
+        </table>
+      );
+    }
   }
 }
   
