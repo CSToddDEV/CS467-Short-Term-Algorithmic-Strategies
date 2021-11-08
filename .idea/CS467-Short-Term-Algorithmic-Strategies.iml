@@ -12,8 +12,6 @@
   <component name="PyNamespacePackagesService">
     <option name="namespacePackageFolders">
       <list>
-        <option value="$MODULE_DIR$/flask_back_end/models" />
-        <option value="$MODULE_DIR$/flask_back_end/api" />
         <option value="$MODULE_DIR$/flask_back_end" />
       </list>
     </option>
