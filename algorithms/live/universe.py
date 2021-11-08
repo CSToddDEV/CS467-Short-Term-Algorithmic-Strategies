@@ -14,6 +14,9 @@ class Universe:
     """
     def __init__(self, weights, force_universe=False):
         self._weights = weights
+        self._universe = w.universe3
+        self._summary_data = {}
+        self._universe_check = False
         self._new_focus = False
         self._old_focus = None
         self._force_universe = force_universe
@@ -29,6 +32,7 @@ class Universe:
 
         # If first of month get new focus
         if (datetime.date.today().day == 1) or (equity is None) or self._force_universe:
+            self.set_universe_check()
             equity = self.get_new_focus()
 
             if equity != self.get_current_equity():
@@ -36,7 +40,8 @@ class Universe:
                 data = a.Data(self.get_current_equity(), self.get_weights())
                 data.pull_close()
                 ticker_data = data.get_data()
-                self.update_signals(self.buy_sell_signals("SELL", self.get_current_equity(), 0, ticker_data["daily_open"],
+                self.update_signals(self.buy_sell_signals("SELL", self.get_current_equity(), 0,
+                                                          ticker_data["daily_open"],
                                                           ticker_data["daily_close"],
                                                           datetime.date.today().strftime("%A %d. %B %Y")))
                 self.set_new_focus()
@@ -58,13 +63,32 @@ class Universe:
 
         return column.find_one()["current_focus"]
 
+    def get_universe(self):
+        """
+        Returns self._universe
+        """
+        return self._universe
+
+    def get_universe_check(self):
+        """
+        Returns self._universe_check
+        """
+        return self._universe_check
+
+    def get_summary_data(self):
+        """
+        Returns summary data
+        """
+        self.set_summary_data(new_focus=self.get_focus(), old_focus=self.get_old_focus())
+        return self._summary_data
+
     def get_new_focus(self):
         """
         Calculates the next equity to focus on.
         :return: new_focus
         """
         # Get all the tickers we are tracking
-        universe = w.universe2
+        universe = self.get_universe()
         new_focus = None
 
         # Cycle through the tickers in the Universe and choose the next one to focus on
@@ -114,6 +138,19 @@ class Universe:
         """
         self._new_focus = True
 
+    def set_universe_check(self):
+        """
+        Sets self._universe_check
+        """
+        self._universe_check = True
+
+    def set_summary_data(self, **kwargs):
+        """
+        Sets self._summary_data
+        """
+        for arg in kwargs:
+            self._summary_data[arg] = kwargs[arg]
+
     def set_old_focus(self, old_focus):
         """
         Sets the data member self_old_focus with the original focus
@@ -138,18 +175,6 @@ class Universe:
         Calculates and returns buy and sell signals
         :return: signals (JSON Object)
         """
-        # total_percent_invested = 0
-        # total_bought = 0
-        # total_sold = 0
-
-        # Figure out total percent invested, total percent bought and sold
-        # for resolution in self.get_current_portfolio().keys():
-        #     if resolution["invested"]:
-        #         total_percent_invested += resolution["max_weight"]
-        #         if resolution in self.get_buy():
-        #             total_bought += resolution["max_weight"]
-        #     elif resolution in self._sell:
-        #         total_sold += resolution["max_weight"]
 
         # Build Buy/Sell Signal
         signals = {

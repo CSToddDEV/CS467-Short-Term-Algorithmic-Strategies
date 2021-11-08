@@ -8,6 +8,7 @@ import weights as w
 import datetime
 import av as a
 import pymongo
+import json
 import copy
 
 
@@ -23,9 +24,11 @@ class Algorithm:
         self._equity = self._universe.get_focus()
         self._new_focus = self._universe.get_new_focus_truth()
         self._old_focus = self._universe.get_old_focus()
+        self._universe_check = self._universe.get_universe_check()
         self._buy = []
         self._sell = []
         self._signal = None
+        self._summary_data = {}
 
     # Get Methods
     def get_equity(self):
@@ -34,6 +37,12 @@ class Algorithm:
         :return: self._equity
         """
         return self._equity
+
+    def get_summary_data(self):
+        """
+        Returns self._summary_data as a JSON object for recording what signals form this run of Algorithm
+        """
+        return json.dumps(self._summary_data)
 
     def get_portfolio(self):
         """
@@ -55,6 +64,12 @@ class Algorithm:
         :return: self._sell
         """
         return self._sell
+
+    def get_universe_check(self):
+        """
+        Return self._universe_check
+        """
+        return self._universe_check
 
     def get_current_portfolio(self):
         """
@@ -124,6 +139,15 @@ class Algorithm:
         """
         self._equity = equity
 
+    def set_summary_data(self, parent_class, **kwargs):
+        """
+        Sets self._summary_data
+        """
+        self._summary_data[parent_class] = {}
+
+        for arg in kwargs:
+            self._summary_data[parent_class][arg] = kwargs[arg]
+
     def set_buy(self, resolution):
         """
         Adds resolution period to self._buy
@@ -191,7 +215,14 @@ class Algorithm:
                                                       data['daily_open'], data['daily_close'],
                                                       datetime.date.today().strftime("%A %d. %B %Y")))
 
-        return True
+        # Update Reporting Data
+        if self.get_universe_check():
+            self.set_summary_data("Universe Class", **self.get_universe().get_summary_data())
+        self.set_summary_data("Algorithm Class", signal=self.get_signal(), focus=self.get_equity(),
+                              previous_focus=self.get_old_focus(), universe_change=self.get_new_focus_truth(),
+                              portfolio=self.get_current_portfolio())
+
+        return self.get_summary_data()
 
     def buy_sell_signals(self, signal, ticker, total_invested, open, close, date):
         """
@@ -221,4 +252,5 @@ class Algorithm:
 
 
 algo = Algorithm()
-algo.run()
+print(algo.run())
+
