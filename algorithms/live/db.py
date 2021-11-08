@@ -38,3 +38,9 @@ class Database:
         Updates the current focus in MongoDB
         """
         self.get_db()["focus"].update_one(old_equity, new_equity)
+
+    def backtest_data_point(self, data, date):
+        if self.get_db()["backtest_data_3stat_v1.0"].find_one({'date': date}):
+            self.get_db()["backtest_data_3stat_v1.0"].update_one({'date': date}, data)
+        else:
+            self.get_db()["backtest_data_3stat_v1.0"].insert_one(data)

@@ -13,7 +13,7 @@ class Universe:
     """
     def __init__(self, weights, force_universe=False):
         self._weights = weights
-        self._universe = w.universe3
+        self._universe = w.universe2
         self._summary_data = {}
         self._universe_check = False
         self._new_focus = False
