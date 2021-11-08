@@ -1,11 +1,10 @@
 # 3STAT Algorithm - universe.py
 # Fall 2021 CS 463
 
-from KEYS_AND_CONSTANTS import DB_NAME, HOST, PORT, USERNAME, PASSWORD
-import pymongo
-import datetime
-import av as a
 import weights as w
+import datetime
+import db as d
+import av as a
 
 
 class Universe:
@@ -56,12 +55,10 @@ class Universe:
         Returns current equity in focus from DB
         :return: current_equity
         """
-        client = pymongo.MongoClient(host=HOST, port=PORT, username=USERNAME, password=PASSWORD, authSource="admin")
-        db = client[DB_NAME]
-        column = db["focus"]
-        self.set_old_focus(column.find_one()["current_focus"])
+        old_focus = d.Database().return_current_focus()
+        self.set_old_focus(old_focus)
 
-        return column.find_one()["current_focus"]
+        return old_focus
 
     def get_universe(self):
         """
@@ -162,13 +159,9 @@ class Universe:
         """
         Sets current equity in focus from DB
         """
-        client = pymongo.MongoClient(host=HOST, port=PORT, username=USERNAME, password=PASSWORD, authSource="admin")
-        db = client[DB_NAME]
-        column = db["focus"]
-
         old_equity = {"current_focus": self.get_old_focus()}
         new_equity = {"$set": {"current_focus": equity}}
-        column.update_one(old_equity, new_equity)
+        d.Database().update_current_focus(old_equity, new_equity)
 
     def buy_sell_signals(self, signal, ticker, total_invested, open, close, date):
         """
@@ -192,8 +185,4 @@ class Universe:
         """
         Updates the buy/sell signals in the database
         """
-        client = pymongo.MongoClient(host=HOST, port=PORT, username=USERNAME, password=PASSWORD, authSource="admin")
-        db = client[DB_NAME]
-        column = db["signals"]
-
-        column.insert_one(signals)
+        d.Database().add_signals(signals)
