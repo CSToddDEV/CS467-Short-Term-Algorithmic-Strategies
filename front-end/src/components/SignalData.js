@@ -23,7 +23,7 @@ class DataTable extends React.Component {
       }
   }
 
-  async componentDidMount() {
+  componentDidMount() {
     axios.get('https://www.cstodd.dev/3stat/signals/')
       .then( (response) => {
         console.log("response", response);
