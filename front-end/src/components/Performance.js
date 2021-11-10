@@ -29,6 +29,8 @@ metricsMap.set('1 year', {
     drawdown: -9
 });
 
+const mockDate = "November 9, 2021";
+
 function Performance() {
     return (
       <div className="performance content">
@@ -89,18 +91,23 @@ class MetricsView extends React.Component {
     return (Math.round(initialValue * 100) / 100).toFixed(2);
   }
 
-  buildMetricRow(metricName, percentValue) {
+  buildMetricRow(metricName, percentValue, includesDollar) {
     let signChar = '+';
     if (percentValue < 0) {
         signChar = '-';
         percentValue *= -1;
     }
 
+    let dollarValue = '-';
+    if (includesDollar) {
+        dollarValue = signChar + '$' + (this.setTwoDecimals((percentValue / 100) * this.state.startingCash)).toString();
+    }
+
     return (
     <tr>
         <td>{metricName}</td>
         <td>{signChar + percentValue.toString() + '%'}</td>
-        <td>{signChar + '$' + (this.setTwoDecimals((percentValue / 100) * this.state.startingCash)).toString()}</td>
+        <td>{dollarValue}</td>
     </tr>
     );
   }
@@ -109,9 +116,9 @@ class MetricsView extends React.Component {
       let metricRows = [];
       let currentMetrics = metricsMap.get(this.state.currentPeriod);
 
-      metricRows.push(this.buildMetricRow('Rate of return', currentMetrics.rate_of_return));
-      metricRows.push(this.buildMetricRow('S&P 500 rate of return', currentMetrics.benchmark_ror));
-      metricRows.push(this.buildMetricRow('Maximum drawdown', currentMetrics.drawdown));
+      metricRows.push(this.buildMetricRow('Rate of return', currentMetrics.rate_of_return, true));
+      metricRows.push(this.buildMetricRow('S&P 500 rate of return', currentMetrics.benchmark_ror, true));
+      metricRows.push(this.buildMetricRow('Maximum drawdown', currentMetrics.drawdown, false));
 
       return metricRows;
   }
@@ -132,6 +139,7 @@ class MetricsView extends React.Component {
                 <span className="performanceLabel">Time Period: </span>
                 {periodHeaders}
             </div>
+            <p className="periodsNote">Time periods ending {mockDate}</p>
             <table className="metricsTable">
                 <thead>
                     <tr>

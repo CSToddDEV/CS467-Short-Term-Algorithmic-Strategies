@@ -70,6 +70,10 @@ button:hover {
   margin-bottom: 15px;
 }
 
+.periodsNote {
+  font-size: 15px;
+}
+
 .performanceLabel {
   margin-right: 5px;
   font-weight: bold;
