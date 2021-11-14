@@ -35,6 +35,10 @@ table td, table th {
   padding: 10px 10px;
 }
 
+button:hover {
+  background-color: #f09090;
+}
+
 .App {
   text-align: center;
 }
@@ -50,12 +54,29 @@ table td, table th {
   padding: 5px 0px;
 }
 
+.selectedBtn {
+  background-color: #fa6666;
+}
+
 .content {
   position: fixed;
   top: 50%;
   left: 50%;
   -webkit-transform: translate(-50%, -50%);
   transform: translate(-50%, -50%);
+}
+
+.periodTabs {
+  margin-bottom: 15px;
+}
+
+.periodsNote {
+  font-size: 15px;
+}
+
+.performanceLabel {
+  margin-right: 5px;
+  font-weight: bold;
 }
 
 .navUnit:hover {

@@ -1,7 +1,7 @@
 # 3STAT Algorithm - av.py
 # Fall 2021 CS 463
 import datetime
-
+import weights as w
 from api_key import api as key
 import requests
 import time
@@ -12,7 +12,7 @@ class Data:
     3STAT class for communicating with Alpha Vantage API
     """
 
-    def __init__(self, ticker, weights):
+    def __init__(self, ticker, weights=None):
         self._weights = weights
         self._api_key = key
         self._equity = ticker
@@ -194,6 +194,7 @@ class Data:
         Will set info in self._data.
         """
         # Get Data
+        time.sleep(15)
         url = self.build_url("BBANDS", self.get_equity(), "daily", "14", "close")
         returned = requests.get(url)
         data = returned.json()
@@ -255,6 +256,8 @@ class Data:
               "&outputsize=full&apikey={1}".format(self.get_equity(), self.get_api_key())
         returned = requests.get(url)
         data = returned.json()
+        print(data)
+        data.keys()
 
         # Add to Dictionary eg. {3: 126.0467}
         if "Time Series (Daily)" in data.keys():
@@ -287,8 +290,8 @@ class Data:
         """
         # Get Bollinger Band
         self.pull_bb_low()
-        time.sleep(15)
-        return self.pull_3day_moving_avg_close() - self.get_data()["bbands_low"]
+        # time.sleep(15)
+        return self.get_data()["bbands_low"]
 
     def daily_data(self):
         """
@@ -314,7 +317,7 @@ class Data:
         Returns the universe selection mechanic for 3STAT 1.0
         """
         self.pull_bb_low_date(date)
-        return self.pull_3day_moving_avg_close_date(date) - self.get_data()["bbands_low"]
+        return self.get_data()["bbands_low"]
 
     def test_api(self):
         """
@@ -327,5 +330,17 @@ class Data:
         self.pull_close()
         print(self.get_data())
 
-#
-# Data("TQQQ", w.weight_3).test_api()
+    def backfill_benchmark_data(self):
+        """
+        Returns a dictionary of the data for backfilling the benchmark database
+        """
+        self.pull_close_open_backfill()
+        return self.get_data()
+
+    def benchmark_data(self):
+        """
+        Returns a dictionary of the data for backfilling the benchmark database
+        """
+        self.pull_close()
+        return self.get_data()
+
