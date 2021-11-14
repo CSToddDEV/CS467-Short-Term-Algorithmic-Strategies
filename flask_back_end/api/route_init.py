@@ -5,6 +5,7 @@ from flask_restful import Api
 from .auth import RegisterUserApi, LoginApi
 from .ticker_routes import TickersApi, TickerApi
 from .signals_routes import SignalsApi, SignalApi
+from .stats_routes import StatsApi
 
 
 def initialize_routes(api):
@@ -16,3 +17,5 @@ def initialize_routes(api):
 
     api.add_resource(SignalsApi, '/3stat/signals/')
     api.add_resource(SignalApi, '/3stat/signals/<signal_id>')
+
+    api.add_resource(StatsApi, '/3stat/stats/')

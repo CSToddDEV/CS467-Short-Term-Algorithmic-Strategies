@@ -1,6 +1,7 @@
 import React from 'react';
 import { PieChart } from 'react-minimal-pie-chart';
 import axios from 'axios';
+import {authFetch} from "./App";
 
 const defaultLabelStyle = {
     fontSize: '5px',
@@ -25,18 +26,19 @@ class Portfolio extends React.Component {
   }
 
   componentDidMount() {
-    axios.get('https://www.cstodd.dev/3stat/signals/')
-      .then( (response) => {
-        console.log("response", response);
-        console.log("data", response.data);
-        let signals = response.data.result;
-        let lastSignal = signals[signals.length - 1];
-        console.log(lastSignal);
-        this.setState({
-          ticker: lastSignal.ticker,
-          percent_invested: lastSignal.total_invested,
-          isLoading: false
-        });
+    authFetch('/3stat/signals/', {
+          method: 'get',
+          headers: {
+              'Content-Type': 'application/json'
+          }
+        }).then( response => response.json()
+         ).then( data => {
+             console.log(data.result.at(-1).ticker);
+            this.setState({
+                ticker: data.result.at(-1).ticker,
+                percent_invested: data.result.at(-1).total_invested,
+                isLoading: false
+            });
       })
       .catch( (error) => {
         console.log(error);
@@ -80,7 +82,7 @@ class Portfolio extends React.Component {
                       fontFamily: 'sans-serif',
                     }}
                   >
-                    {Math.round(dataEntry.percentage) + '%' + ' ' + dataEntry.title}
+                    {Math.round(dataEntry.percentage) + '% ' + dataEntry.title}
                   </text>
               )}
               labelStyle={defaultLabelStyle}

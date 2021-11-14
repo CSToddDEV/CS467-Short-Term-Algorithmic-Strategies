@@ -24,7 +24,7 @@ class SignalsApi(Resource):
     >>> api = Api(app=app)
     >>> api.add_resource(SignalsApi, '/api/signals')
     """
-    # @jwt_required()
+    @jwt_required()
     def get(self):
         output = Signals.objects()
         return jsonify({'result': output})
@@ -69,6 +69,7 @@ class SignalApi(Resource):
         :return: JSON object
         """
         output = Signals.objects.get(id=signal_id)
+        print(output)
         return jsonify({'result': output})
 
     @jwt_required()
