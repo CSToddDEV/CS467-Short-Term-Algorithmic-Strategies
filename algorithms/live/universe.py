@@ -1,6 +1,7 @@
 # 3STAT Algorithm - universe.py
 # Fall 2021 CS 463
 
+import backtest as b
 import weights as w
 import datetime
 import db as d
@@ -12,6 +13,7 @@ class Universe:
     Basic Universe Class
     """
     def __init__(self, weights, force_universe=False):
+        self._date_modifier = "%A %d. %B %Y"
         self._weights = weights
         self._universe = w.universe2
         self._summary_data = {}
@@ -19,6 +21,8 @@ class Universe:
         self._new_focus = False
         self._old_focus = None
         self._force_universe = force_universe
+        self._date_modifier = "%A %d. %B %Y"
+        self._date = datetime.date.today().strftime(self.get_date_modifier())
         self._focus = self.select_universe()
 
     def select_universe(self):
@@ -27,6 +31,7 @@ class Universe:
         :return: equity
         """
         # Get current equity
+        data_set = False
         equity = self.get_current_equity()
 
         # If first of month get new focus
@@ -35,6 +40,13 @@ class Universe:
             equity = self.get_new_focus()
 
             if equity != self.get_current_equity():
+                # Update Data for old ticker in Database
+                equity_data = a.Data(self.get_current_equity(), self.get_weights()).daily_data()
+                b.Backtest(self.get_universe(), self.get_weights()).data_point(self.get_old_focus(),
+                                                                               equity_data,
+                                                                               self.get_datetime_object_from_date(self.get_date()),
+                                                                               True)
+
                 # SELL SIGNAL HERE
                 data = a.Data(self.get_current_equity(), self.get_weights())
                 data.pull_close()
@@ -45,7 +57,18 @@ class Universe:
                                                           datetime.date.today().strftime("%A %d. %B %Y")))
                 self.set_new_focus()
                 self.set_current_equity(equity)
+                equity_data = a.Data(self.get_current_equity(), self.get_weights()).daily_data()
+                b.Backtest(self.get_universe(), self.get_weights()).data_point(self.get_current_equity(),
+                                                                               equity_data,
+                                                                               self.get_datetime_object_from_date(self.get_date()),
+                                                                               True, True)
+                data_set = True
 
+        if not data_set:
+            equity_data = a.Data(self.get_current_equity(), self.get_weights()).daily_data()
+            b.Backtest(self.get_universe(), self.get_weights()).data_point(self.get_current_equity(),
+                                                                           equity_data,
+                                                                           self.get_datetime_object_from_date(self.get_date()))
         # Return current focus
         return equity
 
@@ -59,6 +82,18 @@ class Universe:
         self.set_old_focus(old_focus)
 
         return old_focus
+
+    def get_date(self):
+        """
+        Returns self._date
+        """
+        return self._date
+
+    def get_date_modifier(self):
+        """
+        Returns self._date_modifier
+        """
+        return self._date_modifier
 
     def get_universe(self):
         """
@@ -127,6 +162,12 @@ class Universe:
         """
         return self._weights
 
+    def get_datetime_object_from_date(self, date):
+        """
+        Returns a datetime object from a date
+        """
+        return datetime.datetime.strptime(date, self.get_date_modifier())
+
     # Set Methods
     def set_new_focus(self):
         """
@@ -186,3 +227,9 @@ class Universe:
         Updates the buy/sell signals in the database
         """
         d.Database().add_signals(signals)
+
+    def make_pretty_date(self, dt_obj):
+        """
+        Turns dt_obj into pretty date used in signals
+        """
+        return dt_obj.strftime(self.get_date_modifier())

@@ -1,7 +1,9 @@
 # 3STAT Algorithm - algo.py
 # Fall 2021 CS 463
 
+import benchmark as n
 import portfolio as p
+import backtest as t
 import universe as u
 import weights as w
 import datetime
@@ -180,6 +182,7 @@ class Algorithm:
             self.get_portfolio().reset_portfolio()
             self._current_portfolio = self.get_portfolio().get_portfolio()
 
+        # Get Daily Data
         data = a.Data(self.get_equity(), self.get_weights()).daily_data()
         updated_weight_data = copy.deepcopy(self.get_weights())
 
@@ -214,7 +217,14 @@ class Algorithm:
                                                       data['daily_open'], data['daily_close'],
                                                       datetime.date.today().strftime("%A %d. %B %Y")))
 
+        # Get and Update Backtest Stats and Benchmarks
+        n.Benchmark().benchmark_daily()
+        bt = t.Backtest(self.get_universe(), self.get_weights())
+        bt.backtest()
+        d.Database().prune_database()
+
         # Update Reporting Data
+        self.set_summary_data("Backtest Class", **bt.get_update_status())
         if self.get_universe_check():
             self.set_summary_data("Universe Class", **self.get_universe().get_summary_data())
         self.set_summary_data("Algorithm Class", signal=self.get_signal(), focus=self.get_equity(),
@@ -246,5 +256,3 @@ class Algorithm:
         d.Database().add_signals(signals)
 
 
-algo = Algorithm()
-print(algo.run())
