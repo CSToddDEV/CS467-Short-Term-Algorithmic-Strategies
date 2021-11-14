@@ -81,4 +81,4 @@ def reset_db():
 # prune_db()
 # prune_first()
 # algo_run()
-reset_db()
+# reset_db()

@@ -1,5 +1,5 @@
 import React from 'react';
-import axios from 'axios';
+import {authFetch} from "./App";
 
 const dataHeaders = ['Tracked Ticker', 'Date', 'Signal', '% invested'];
 
@@ -24,18 +24,20 @@ class DataTable extends React.Component {
   }
 
   componentDidMount() {
-    axios.get('https://www.cstodd.dev/3stat/signals/')
-      .then( (response) => {
-        console.log("response", response);
-        console.log("data", response.data);
-        this.setState({
-          signals: response.data.result,
-          isLoading: false
-        });
-      })
-      .catch( (error) => {
+      authFetch('/3stat/signals/', {
+          method: 'get',
+          headers: {
+              'Content-Type': 'application/json'
+          }
+        }).then( res => res.json()
+        ).then( data => {
+            this.setState({
+            signals: data,
+            isLoading: false
+            })
+      }).catch( (error) => {
         console.log(error);
-      }); 
+      });
   }
 
   generateHeaders() {
@@ -50,14 +52,15 @@ class DataTable extends React.Component {
   generateRows() {
     let table_rows = [];
 
-    this.state.signals.forEach(signalData => {
+    console.log("ROWS", this.state.signals.result);
+    this.state.signals.result.forEach(signalData => {
       let newRow = [];
       newRow.push(<td>{signalData.ticker}</td>);
       newRow.push(<td>{signalData.date}</td>);
       newRow.push(<td>{signalData.signal}</td>);
       newRow.push(<td>{signalData.total_invested + "%"}</td>);
-      
-      table_rows.push(<tr>{newRow}</tr>);
+
+      table_rows.push(<tr key={signalData.id}>{newRow}</tr>);
     });
 
     return table_rows;
