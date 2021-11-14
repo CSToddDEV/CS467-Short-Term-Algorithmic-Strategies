@@ -5,6 +5,7 @@ import Subscribe from './Subscribe';
 import Unsubscribe from './Unsubscribe';
 import SignalData from './SignalData';
 import Portfolio from './Portfolio';
+import Performance from './Performance';
 
 function Main() {
     return (
@@ -15,6 +16,7 @@ function Main() {
           <Route exact path='/3stat/unsubscribe' component={Unsubscribe}></Route>
           <Route exact path='/3stat/data' component={SignalData}></Route>
           <Route exact path='/3stat/portfolio' component={Portfolio}></Route>
+          <Route exact path='/3stat/performance' component={Performance}></Route>
       </Switch>
     );
   }
