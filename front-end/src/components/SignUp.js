@@ -100,7 +100,7 @@ function SignUp(props) {
           <br></br>
           <label>
             Password:
-            <input name="password" type="text" value={this.state.password} onChange={this.handleChange} />
+            <input name="password" type="password" value={this.state.password} onChange={this.handleChange} />
           </label>
           <br></br>
           <input type="submit" value="Sign Up" /><input type="submit" value="Login" />
