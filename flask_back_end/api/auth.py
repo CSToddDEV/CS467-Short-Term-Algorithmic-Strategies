@@ -32,11 +32,22 @@ class RegisterUserApi(Resource):
         POST response method for creating user.
         :return: JSON object
         """
+        # request.get_json()
+        # data = request.get_data()
         data = request.get_json()
         post_user = Users(**data)
         post_user.save()
-        output = {'id': str(post_user.id)}
-        return jsonify({'result': output})
+        user = Users.objects.get(email=data.get('email'))
+        auth_success = user.check_pw_hash(data.get('password'))
+        if not auth_success:
+            return unauthorized_user()
+        else:
+            expiry = datetime.timedelta(days=365)
+            access_token = create_access_token(identity=str(user.id), expires_delta=expiry)
+            refresh_token = create_refresh_token(identity=str(user.id))
+            return jsonify({'result': {'access_token': access_token,
+                                       'refresh_token': refresh_token,
+                                       'logged_in_as': f"{user.email}"}})
 
 
 class LoginApi(Resource):

@@ -1,41 +1,17 @@
 import React from 'react';
-import axios from 'axios';
 
-const periods = ['2 weeks', '1 month', '6 months', '1 year'];
+const periods = ['2 Weeks', '1 Month', '3 Months', '6 Months', '1 Year'];
 
 const metricsMap = new Map();
-metricsMap.set('2 weeks', {
-    period: '2 weeks',
-    rate_of_return: 3,
-    benchmark_ror: 1,
-    drawdown: -2
-});
-metricsMap.set('1 month', {
-    period: '1 month',
-    rate_of_return: 5,
-    benchmark_ror: 3,
-    drawdown: -3
-});
-metricsMap.set('6 months', {
-    period: '6 months',
-    rate_of_return: 10,
-    benchmark_ror: 4,
-    drawdown: -5
-});
-metricsMap.set('1 year', {
-    period: '1 year',
-    rate_of_return: 30,
-    benchmark_ror: 7,
-    drawdown: -9
-});
 
-const mockDate = "November 9, 2021";
+let today = new Date();
+const mockDate = today.toDateString();
 
-function Performance() {
+function Performance(metricsMap) {
     return (
       <div className="performance content">
         <h1>Performance Metrics</h1>
-        <MetricsView />
+        <MetricsView map={metricsMap} />
       </div>
     );
 }
@@ -44,7 +20,7 @@ class MetricsView extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-        currentPeriod: '2 weeks',
+        currentPeriod: '2 Weeks',
         startingCash: 1000,
         tempCash: 1000,
         isLoading: true
@@ -52,6 +28,56 @@ class MetricsView extends React.Component {
     this.onClick = this.handleClick.bind(this);
     this.onSubmit = this.handleSubmit.bind(this);
     this.onChange = this.handleChange.bind(this);
+  }
+
+  componentDidMount() {
+    fetch('/3stat/stats/', {
+          method: 'get',
+          headers: {
+              'Content-Type': 'application/json'
+          }
+        }).then( response => response.json()
+         ).then( data => {
+            this.setState({
+                stats: data.result
+            });
+      }).then( () => {
+        metricsMap.set('2 Weeks', {
+            period: '2 Weeks',
+            rate_of_return: this.state.stats.at(4).rate_of_return,
+            benchmark_ror: this.state.stats.at(4).benchmark_ror[0][0].ror,
+            drawdown: this.state.stats.at(4).drawdown
+        });
+        metricsMap.set('1 Month', {
+            period: '1 Month',
+            rate_of_return: this.state.stats.at(3).rate_of_return,
+            benchmark_ror: this.state.stats.at(3).benchmark_ror[0][0].ror,
+            drawdown: this.state.stats.at(3).drawdown
+        });
+        metricsMap.set('3 Months', {
+            period: '3 Months',
+            rate_of_return: this.state.stats.at(2).rate_of_return,
+            benchmark_ror: this.state.stats.at(2).benchmark_ror[0][0].ror,
+            drawdown: this.state.stats.at(2).drawdown
+        });
+        metricsMap.set('6 Months', {
+            period: '6 Months',
+            rate_of_return: this.state.stats.at(1).rate_of_return,
+            benchmark_ror: this.state.stats.at(1).benchmark_ror[0][0].ror,
+            drawdown: this.state.stats.at(1).drawdown
+        });
+        metricsMap.set('1 Year', {
+            period: '1 Year',
+            rate_of_return: this.state.stats.at(0).rate_of_return,
+            benchmark_ror: this.state.stats.at(0).benchmark_ror[0][0].ror,
+            drawdown: this.state.stats.at(0).drawdown
+        });
+        this.setState({
+                isLoading: false
+            })
+    }).catch( (error) => {
+        console.log(error);
+      });
   }
 
   handleClick(event) {
@@ -116,18 +142,44 @@ class MetricsView extends React.Component {
       let metricRows = [];
       let currentMetrics = metricsMap.get(this.state.currentPeriod);
 
-      metricRows.push(this.buildMetricRow('Rate of return', currentMetrics.rate_of_return, true));
-      metricRows.push(this.buildMetricRow('S&P 500 rate of return', currentMetrics.benchmark_ror, true));
-      metricRows.push(this.buildMetricRow('Maximum drawdown', currentMetrics.drawdown, false));
+      metricRows.push(this.buildMetricRow('3STAT Rate Of Return', currentMetrics.rate_of_return, true));
+      metricRows.push(this.buildMetricRow('S&P 500 Rate of Return', currentMetrics.benchmark_ror, true));
+      metricRows.push(this.buildMetricRow('Monthly Draw Down Percent', currentMetrics.drawdown, false));
 
       return metricRows;
   }
 
   render() {
-    let periodHeaders = this.generatePeriodHeaders();
-    let metricRows = this.generateMetricRows();
-
-    return (
+    // Conditional Return for bdata place holder
+      let periodHeaders = this.generatePeriodHeaders();
+      if (this.state.isLoading) {
+      return (
+          <div className="metricsView">
+              <form onSubmit={this.onSubmit}>
+                  <label htmlFor="startingCash" className="performanceLabel">Starting cash ($):</label>
+                  <input name="startingCash" type="text" value={this.state.tempCash} onChange={this.onChange}/>
+                  <input type="submit" value="Set"/>
+              </form>
+              <br></br>
+              <div className="periodTabs">
+                  <span className="performanceLabel">Time Period: </span>
+                  {periodHeaders}
+              </div>
+              <p className="periodsNote">Time periods ending {mockDate}</p>
+              <table className="metricsTable">
+                  <thead>
+                  <tr>
+                      <th>Metric</th>
+                      <th>% change</th>
+                      <th>Dollar change <br></br>(based on starting cash)</th>
+                  </tr>
+                  </thead>
+                  <tbody>Data is Loading...</tbody>
+              </table>
+          </div>
+      )} else{
+          let metricRows = this.generateMetricRows();
+          return (
         <div className="metricsView">
             <form onSubmit={this.onSubmit}>
                 <label for="startingCash" className="performanceLabel">Starting cash ($):</label> 
@@ -152,7 +204,7 @@ class MetricsView extends React.Component {
             </table>
         </div>
     );
-  }
+  }}
 }
   
 export default Performance;
