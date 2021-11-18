@@ -83,6 +83,22 @@ button:hover {
   background-color: #61d463;
 }
 
+.about_content {
+  margin: 0 15%;
+}
+
+.disclaimer {
+  font-weight: bold;
+}
+
+.footer {
+  position: absolute;
+  left: 25%;
+  right: 25%;
+  font-size: small;
+  bottom: 0;
+}
+
 [aria-current] {
   border-bottom: 4px solid #138516;
 }
