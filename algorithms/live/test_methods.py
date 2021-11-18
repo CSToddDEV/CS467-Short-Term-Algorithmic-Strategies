@@ -64,7 +64,7 @@ def algo_run():
     """
     Algo Run
     """
-    g.Algorithm().run()
+    return g.Algorithm().run()
 
 def reset_db():
     """
@@ -80,5 +80,5 @@ def reset_db():
 # test_backtest()
 # prune_db()
 # prune_first()
-# algo_run()
+algo_run()
 # reset_db()
