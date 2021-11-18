@@ -164,7 +164,7 @@ class Backtest:
             stat["rate_of_return"] = round(((stats[period]["portfolio_total"] -
                                        stats[period]["portfolio_base"])/stats[period]["portfolio_base"]) * 100)
             stat["benchmark_ror"] = self.add_benchmarks(period),
-            stat["drawdown"] = round(stats[period]["dd"] * -100, 2)
+            stat["drawdown"] = round(stats[period]["dd"] * 100, 2)
             d.Database().update_stats_collection(stat)
 
     def add_benchmarks(self, period):
