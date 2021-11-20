@@ -40,9 +40,7 @@ class MetricsView extends React.Component {
           }
         }).then( response => response.json()
          ).then( data => {
-            console.log(data.result);
             if (data.result.length === 0) {
-                console.log("no data");
                 this.setState({
                     dataAvailable: false,
                     isLoading: false
