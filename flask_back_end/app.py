@@ -6,10 +6,12 @@ from flask import Flask, app
 from flask_restful import Api
 from flask_jwt_extended import JWTManager
 from flask_mongoengine import MongoEngine
+from flask_mail import Mail, Message
 
 # Local Resources
 from api.route_init import initialize_routes
-from KEYS_AND_CONSTANTS import DB_NAME, HOST, PORT, USERNAME, PASSWORD, JWT_KEY
+from KEYS_AND_CONSTANTS import DB_NAME, HOST, PORT, USERNAME, PASSWORD, JWT_KEY, MAIL_SERVER, MAIL_PORT,\
+    MAIL_PASSWORD, MAIL_USE_TLS, MAIL_USE_SSL
 
 
 default_config = {'MONGODB_SETTINGS': {
@@ -20,6 +22,17 @@ default_config = {'MONGODB_SETTINGS': {
     'password': PASSWORD,
     'authentication_source': 'admin'},
     'JWT_SECRET_KEY': JWT_KEY}
+
+mail_config = {
+    'MAIL_SERVER': MAIL_SERVER,
+    'MAIL_PORT': MAIL_PORT,
+    'MAIL_USERNAME': USERNAME,
+    'MAIL_PASSWORD': Mail,
+    'MAIL_USE_TLS': MAIL_USE_TLS,
+    'MAIL_USE_SSL': MAIL_USE_SSL
+}
+
+
 
 
 def create_flask_app(config: dict = None) -> app.Flask:
@@ -37,6 +50,7 @@ def create_flask_app(config: dict = None) -> app.Flask:
     """
     # Init Flask App
     flask_app = Flask(__name__)
+    mail = Mail(flask_app)
 
     # Configure
     config = default_config if config is None else config
@@ -59,9 +73,9 @@ def create_flask_app(config: dict = None) -> app.Flask:
     # initialize JWTManager
     jwt = JWTManager(app=flask_app)
 
-    return flask_app
+    return flask_app, mail
 
 
 if __name__ == '__main__':
-    app = create_flask_app()
+    app, mail = create_flask_app()
     app.run(port=3000, debug=True)

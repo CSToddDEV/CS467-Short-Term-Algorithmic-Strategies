@@ -9,9 +9,15 @@ USERNAME = 'username'
 PASSWORD = 'password'
 
 # Mail Config Setup
-MAIL_SERVER = None
-MAIL_PORT = None
+# Name/IP Address of Mail Servers
+MAIL_SERVER = 'smtp.gmail.com'
+# Port number of Server Used
+MAIL_PORT = 465
+# Mail address and Password
 MAIL_USERNAME = None
 MAIL_PASSWORD = None
-MAIL_USE_TLS = None
-MAIL_USE_SSL = None
+# Use transport Security Layer Encryption
+MAIL_USE_TLS = False
+# Use Secure Sockets Layer Encryption
+MAIL_USE_SSL = True
+MAIL_DEFAULT_SENDER = ('3STAT', '3STAT@example.com')
