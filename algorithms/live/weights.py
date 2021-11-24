@@ -24,9 +24,9 @@ weight_2 = {
 }
 
 weight_3 = {
-    3: {"weight": 0, "max_weight": 0},
-    5: {"weight": 0, "max_weight": 35},
-    10: {"weight": 0, "max_weight": 60},
+    3: {"weight": 0, "max_weight": 65},
+    5: {"weight": 0, "max_weight": 30},
+    10: {"weight": 0, "max_weight": 0},
     20: {"weight": 0, "max_weight": 0},
     62: {"weight": 0, "max_weight": 0},
     125: {"weight": 0, "max_weight": 0},
@@ -44,14 +44,14 @@ universe2 = [
     'UDOW',
     'UMDD',
     'URTY',
-    'EDC',
-    'LBJ',
-    'RETL',
+    'NAIL',
     'CURE',
     'MIDU',
-    'LABU',
-    'FNGU',
-    'NRGU'
+    'DRN',
+    'WANT',
+    'DUSL',
+    'UBOT',
+    'UTSL'
 ]
 
 universe1 = [

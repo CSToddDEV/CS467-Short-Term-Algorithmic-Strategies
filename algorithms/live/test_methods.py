@@ -18,7 +18,7 @@ def backfill_db():
     """
     Backfills the Database
     """
-    test = t.Backtest(w.universe2, w.weight_3, True)
+    test = t.Backtest(w.universe2, True)
     n.Benchmark().benchmark_backfill()
     test.backtest()
     print(test.get_update_status())
@@ -28,25 +28,27 @@ def api_test():
     """
     Tests API
     """
-    print(a.Data("TQQQ", w.weight_3).new_focus())
+    print(a.Data("TQQQ").new_focus())
 
 
 def test_benchmark():
     """
     Test Benchmark
     """
-    test = t.Backtest(w.universe2, w.weight_3)
+    test = t.Backtest(w.universe2)
     n.Benchmark().benchmark_backfill()
     test.backtest()
     print(test.get_update_status())
+
 
 def test_backtest():
     """
     Test Backtest
     """
-    test = t.Backtest(w.universe2, w.weight_3)
+    test = t.Backtest(w.universe2)
     test.backtest()
     print(test.get_update_status())
+
 
 def prune_db():
     """
@@ -54,17 +56,20 @@ def prune_db():
     """
     d.Database().prune_database()
 
+
 def prune_first():
     """
     Removes all first of month
     """
     d.Database().prune_first_database()
 
+
 def algo_run():
     """
     Algo Run
     """
     return g.Algorithm().run()
+
 
 def reset_db():
     """
@@ -74,11 +79,20 @@ def reset_db():
     prune_first()
     backfill_db()
 
+
+def test_volatility_indicator():
+    """
+    Tests volatility ticker
+    """
+    print(a.Data("UPRO").volatility_indicator("2021-11-23"))
+
 # api_test()
 # backfill_db()
 # test_benchmark()
 # test_backtest()
 # prune_db()
 # prune_first()
-algo_run()
+# algo_run()
 # reset_db()
+test_volatility_indicator()
+

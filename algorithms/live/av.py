@@ -3,8 +3,10 @@
 import datetime
 from base import Base
 from api_key import api as key
+from dateutil.relativedelta import relativedelta
 import requests
 import time
+import math
 
 
 class Data(Base):
@@ -113,6 +115,23 @@ class Data(Base):
             return float(data["Technical Analysis: SMA"][most_recent]["SMA"])
         else:
             return 999999
+
+    def pull_10day_moving_avg_close(self):
+        """
+        This method calls the Alpha Vantage API and pulls the SMA for closing prices based on the weights in the
+        selected weight dictionary.  Will set info in self._data.  Will always pull 10day SMA
+        """
+        # Get Data
+        url = self.build_url("SMA", self.get_equity(), "daily", "10", "close")
+        returned = requests.get(url)
+        data = returned.json()
+
+        # Add to Dictionary eg. {3: 126.0467}
+        if "Technical Analysis: SMA" in data.keys():
+            time.sleep(15)
+            return data["Technical Analysis: SMA"]
+        else:
+            return None
 
     def pull_3day_moving_avg_close_date(self, date):
         """
@@ -344,3 +363,37 @@ class Data(Base):
 
         If backtest is true, this method will pull the full output size, else it will pull the compact output size
         """
+        # Get data based on backtest variable
+        if backtest:
+            url = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={0}" \
+                  "&outputsize=full&apikey={1}".format(self.get_equity(), self.get_api_key())
+            returned = requests.get(url)
+            data = returned.json()
+        else:
+            url = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={0}" \
+                  "&compact=full&apikey={1}".format(self.get_equity(), self.get_api_key())
+            returned = requests.get(url)
+            data = returned.json()
+
+        # Get 10 Day SMA
+        sma = self.pull_10day_moving_avg_close()
+        if date not in sma.keys():
+            return 0
+        else:
+            sma = float(sma[date]["SMA"])
+
+        # Calculate Standard Deviation
+        sd = 0
+        i = 0
+        while i < 10:
+            if date not in data["Time Series (Daily)"].keys():
+                date = self.make_api_pretty_date(self.get_datetime_object_from_api_date(date) - relativedelta(days=1))
+            else:
+                sd += (float(data["Time Series (Daily)"][date]["4. close"]) - sma)**2
+                i += 1
+                date = self.make_api_pretty_date(self.get_datetime_object_from_api_date(date) - relativedelta(days=1))
+        # Get square root to get SD
+        sd = math.sqrt(sd)
+
+        # Return Volatility Indicator
+        return sd/sma

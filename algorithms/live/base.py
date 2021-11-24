@@ -11,6 +11,7 @@ class Base:
     """
     def __init__(self):
         self._date_modifier = "%A %d. %B %Y"
+        self._date_api_modifier = "%Y-%m-%d"
         self._weights = w.weight_3
         self._universe = w.universe2
 
@@ -33,14 +34,32 @@ class Base:
         """
         return self._date_modifier
 
+    def get_api_date_modifier(self):
+        """
+        Returns self._date_modifier
+        """
+        return self._date_api_modifier
+
     def get_datetime_object_from_date(self, date):
         """
         Returns a datetime object from a date
         """
         return datetime.datetime.strptime(date, self.get_date_modifier())
 
+    def get_datetime_object_from_api_date(self, date):
+        """
+        Returns a datetime object from a date
+        """
+        return datetime.datetime.strptime(date, self.get_api_date_modifier())
+
     def make_pretty_date(self, dt_obj):
         """
         Turns dt_obj into pretty date used in signals
         """
         return dt_obj.strftime(self.get_date_modifier())
+
+    def make_api_pretty_date(self, dt_obj):
+        """
+        Turns dt_obj into pretty date used in signals
+        """
+        return dt_obj.strftime(self.get_api_date_modifier())
