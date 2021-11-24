@@ -2,17 +2,17 @@
 # Fall 2021 CS 463
 from KEYS_AND_CONSTANTS import DB_NAME, HOST, PORT, USERNAME, PASSWORD
 from dateutil.relativedelta import relativedelta
+from base import Base
 import backtest as b
-import weights as w
 import pymongo
-import json
 
 
-class Database:
+class Database(Base):
     """
     Class for interacting with MongoDB
     """
     def __init__(self):
+        super().__init__()
         self._client = pymongo.MongoClient(host=HOST, port=PORT, username=USERNAME,
                                            password=PASSWORD, authSource="admin")
         self._db = self._client[DB_NAME]
@@ -93,7 +93,7 @@ class Database:
 
         # Prune Backtest Data
         data = self.get_db()["backtest_data_3stat_v1.0"].find()
-        bto = b.Backtest(w.universe2, w.weight_3)
+        bto = b.Backtest(self.get_universe())
         one_year = bto.get_today_datetime_object() - relativedelta(years=1)
         one_year.replace(day=1)
         for point in data:
@@ -108,7 +108,7 @@ class Database:
         Prunes the signals database to a total of 10 signals
         """
         # Prune Backtest Data
-        bto = b.Backtest(w.universe2, w.weight_3)
+        bto = b.Backtest(self.get_universe())
         one_year = bto.get_today_datetime_object() - relativedelta(years=1)
         one_year = one_year.replace(day=1)
         while one_year < bto.get_today_datetime_object():

@@ -1,31 +1,24 @@
 # 3STAT Algorithm - av.py
 # Fall 2021 CS 463
 import datetime
-import weights as w
+from base import Base
 from api_key import api as key
 import requests
 import time
 
 
-class Data:
+class Data(Base):
     """
     3STAT class for communicating with Alpha Vantage API
     """
 
-    def __init__(self, ticker, weights=None):
-        self._weights = weights
+    def __init__(self, ticker):
+        super().__init__()
         self._api_key = key
         self._equity = ticker
         self._data = {}
 
     # Get Functions
-    def get_weights(self):
-        """
-        Returns the self._weights weight dicitonary
-        :return: self._weights
-        """
-        return self._weights
-
     def get_data(self):
         """
         Returns collected data points
@@ -344,3 +337,10 @@ class Data:
         self.pull_close()
         return self.get_data()
 
+    def volatility_indicator(self, date, backtest=False):
+        """
+        Returns the volatility indicator for the ticker.  The volatility indicator is:
+            Volatility Indicator = (10 Day Standard Deviation / 10 Day SMA)
+
+        If backtest is true, this method will pull the full output size, else it will pull the compact output size
+        """

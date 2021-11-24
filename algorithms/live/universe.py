@@ -1,27 +1,24 @@
 # 3STAT Algorithm - universe.py
 # Fall 2021 CS 463
 
+from base import Base
 import backtest as b
-import weights as w
 import datetime
 import db as d
 import av as a
 
 
-class Universe:
+class Universe(Base):
     """
     Basic Universe Class
     """
-    def __init__(self, weights, force_universe=False):
-        self._date_modifier = "%A %d. %B %Y"
-        self._weights = weights
-        self._universe = w.universe2
+    def __init__(self, force_universe=False):
+        super().__init__()
         self._summary_data = {}
         self._universe_check = False
         self._new_focus = False
         self._old_focus = None
         self._force_universe = force_universe
-        self._date_modifier = "%A %d. %B %Y"
         self._date = datetime.date.today().strftime(self.get_date_modifier())
         self._focus = self.select_universe()
 
@@ -41,14 +38,14 @@ class Universe:
 
             if equity != self.get_current_equity():
                 # Update Data for old ticker in Database
-                equity_data = a.Data(self.get_current_equity(), self.get_weights()).daily_data()
-                b.Backtest(self.get_universe(), self.get_weights()).data_point(self.get_old_focus(),
+                equity_data = a.Data(self.get_current_equity()).daily_data()
+                b.Backtest(self.get_universe()).data_point(self.get_old_focus(),
                                                                                equity_data,
                                                                                self.get_datetime_object_from_date(self.get_date()),
                                                                                True)
 
                 # SELL SIGNAL HERE
-                data = a.Data(self.get_current_equity(), self.get_weights())
+                data = a.Data(self.get_current_equity())
                 data.pull_close()
                 ticker_data = data.get_data()
                 self.update_signals(self.buy_sell_signals("SELL", self.get_current_equity(), 0,
@@ -57,16 +54,16 @@ class Universe:
                                                           datetime.date.today().strftime("%A %d. %B %Y")))
                 self.set_new_focus()
                 self.set_current_equity(equity)
-                equity_data = a.Data(self.get_current_equity(), self.get_weights()).daily_data()
-                b.Backtest(self.get_universe(), self.get_weights()).data_point(self.get_current_equity(),
+                equity_data = a.Data(self.get_current_equity()).daily_data()
+                b.Backtest(self.get_universe()).data_point(self.get_current_equity(),
                                                                                equity_data,
                                                                                self.get_datetime_object_from_date(self.get_date()),
                                                                                True, True)
                 data_set = True
 
         if not data_set:
-            equity_data = a.Data(self.get_current_equity(), self.get_weights()).daily_data()
-            b.Backtest(self.get_universe(), self.get_weights()).data_point(self.get_current_equity(),
+            equity_data = a.Data(self.get_current_equity()).daily_data()
+            b.Backtest(self.get_universe()).data_point(self.get_current_equity(),
                                                                            equity_data,
                                                                            self.get_datetime_object_from_date(self.get_date()))
         # Return current focus
@@ -126,9 +123,9 @@ class Universe:
         # Cycle through the tickers in the Universe and choose the next one to focus on
         for ticker in universe:
             if new_focus is None:
-                new_focus = [ticker, a.Data(ticker, self.get_weights()).new_focus()]
+                new_focus = [ticker, a.Data(ticker).new_focus()]
             else:
-                bottom_band = a.Data(ticker, self.get_weights()).new_focus()
+                bottom_band = a.Data(ticker).new_focus()
                 if bottom_band < new_focus[1]:
                     new_focus = [ticker, bottom_band]
 

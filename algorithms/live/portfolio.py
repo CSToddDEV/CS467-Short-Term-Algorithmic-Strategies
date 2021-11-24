@@ -1,25 +1,19 @@
 # 3STAT Algorithm - portfolio.py
 # Fall 2021 CS 463
 import pymongo
+from base import Base
 from KEYS_AND_CONSTANTS import DB_NAME, HOST, PORT, USERNAME, PASSWORD
 
 
-class Portfolio:
+class Portfolio(Base):
     """
     A class to represent the Buy and Sell Signals for the 3STAT algorithm
     """
-    def __init__(self, weights):
-        self._weights = weights
+    def __init__(self):
+        super().__init__()
         self._portfolio = self.populate_portfolio()
 
-    # Get Methods
-    def get_weights(self):
-        """
-        Returns weights dictionary
-        :return: self._weights
-        """
-        return self._weights
-
+    # Get Method
     def get_portfolio(self):
         """
         Returns portfolio dictionary

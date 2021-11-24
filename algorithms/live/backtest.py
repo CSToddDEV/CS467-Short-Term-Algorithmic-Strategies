@@ -3,22 +3,19 @@
 
 from dateutil.relativedelta import relativedelta
 import benchmark as n
-import weights as w
+from base import Base
 import datetime
 import db as d
 import av as a
-import time
 
 
-class Backtest:
+class Backtest(Base):
     """
     3STAT class for getting information and statistics on the algorithm's performance
     """
 
-    def __init__(self, universe, weight, backfill=False):
-        self._date_modifier = "%A %d. %B %Y"
-        self._universe = universe
-        self._weights = weight
+    def __init__(self, backfill=False):
+        super().__init__()
         self._stats = {}
         self._update_status = {}
         self._today = datetime.date.today().strftime(self.get_date_modifier())
@@ -57,35 +54,11 @@ class Backtest:
         """
         return self._periods
 
-    def get_universe(self):
-        """
-        Returns self._universe
-        """
-        return self._universe
-
-    def get_weights(self):
-        """
-        Returns self._weights
-        """
-        return self._weights
-
-    def get_date_modifier(self):
-        """
-        Returns self._date_modifier
-        """
-        return self._date_modifier
-
     def get_today_datetime_object(self):
         """
         Returns self._today as a datetime object
         """
         return datetime.datetime.strptime(self.get_today(), self.get_date_modifier())
-
-    def get_datetime_object_from_date(self, date):
-        """
-        Returns a datetime object from a date
-        """
-        return datetime.datetime.strptime(date, self.get_date_modifier())
 
     # Set Methods
     def set_stats(self, stats):
@@ -460,12 +433,6 @@ class Backtest:
             return self.make_pretty_date(today - relativedelta(weeks=(period * 10)))
 
     # Backfill methods
-    def make_pretty_date(self, dt_obj):
-        """
-        Turns dt_obj into pretty date used in signals
-        """
-        return dt_obj.strftime(self.get_date_modifier())
-
     def pull_backfill_data(self):
         """
         Pulls backfill data from API and stores it in backfill_data
@@ -473,7 +440,7 @@ class Backtest:
         backfill_data = {}
 
         for ticker in self._universe:
-            backfill_data[ticker] = a.Data(ticker, self.get_weights()).backfill_data()
+            backfill_data[ticker] = a.Data(ticker).backfill_data()
 
         return backfill_data
 
@@ -609,10 +576,10 @@ class Backtest:
 
             if focus is None:
                 focus = [ticker, (float(data[ticker]["sma_close"][3][dp_date]["SMA"]) -
-                         a.Data(ticker, self.get_weights()).backfill_universe_selection(date))]
+                         a.Data(ticker).backfill_universe_selection(date))]
             else:
                 ticker_selection_value = float(data[ticker]["sma_close"][3][dp_date]["SMA"]) -\
-                                         a.Data(ticker, self.get_weights()).backfill_universe_selection(date)
+                                         a.Data(ticker).backfill_universe_selection(date)
                 if ticker_selection_value < focus[1]:
                     focus = [ticker, ticker_selection_value]
 
