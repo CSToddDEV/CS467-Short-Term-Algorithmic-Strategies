@@ -3,9 +3,9 @@
 
 weight_1 = {
     3: {"weight": 0, "max_weight": 0},
-    5: {"weight": 0, "max_weight": 35},
-    10: {"weight": 0, "max_weight": 50},
-    20: {"weight": 0, "max_weight": 10},
+    5: {"weight": 0, "max_weight": 95},
+    10: {"weight": 0, "max_weight": 0},
+    20: {"weight": 0, "max_weight": 0},
     30: {"weight": 0, "max_weight": 0},
     62: {"weight": 0, "max_weight": 0},
     125: {"weight": 0, "max_weight": 0},

@@ -17,11 +17,11 @@ class Algorithm(Base):
     """
     The main class for the 3STAT algorithm
     """
-    def __init__(self, force_universe=False):
+    def __init__(self, daily_check=False, force_universe=False, today=True):
         super().__init__()
         self._portfolio = p.Portfolio()
         self._current_portfolio = self.get_portfolio().get_portfolio()
-        self._universe = u.Universe(force_universe)
+        self._universe = u.Universe(daily_check, force_universe, today)
         self._equity = self._universe.get_focus()
         self._new_focus = self._universe.get_new_focus_truth()
         self._old_focus = self._universe.get_old_focus()
@@ -176,12 +176,12 @@ class Algorithm(Base):
             self._current_portfolio = self.get_portfolio().get_portfolio()
 
         # Get Daily Data
-        data = a.Data(self.get_equity()).daily_data()
+        data = a.Data(self.get_equity()).hourly_data()
         updated_weight_data = copy.deepcopy(self.get_weights())
 
         for resolution in data['sma_close'].keys():
             # Check to see if we invest
-            if data['daily_close'] > data['sma_close'][resolution]:
+            if data['hourly'] > data['sma_close'][resolution]:
                 if self.get_current_portfolio()[resolution]["invested"] or \
                         updated_weight_data[resolution]["max_weight"] == 0:
                     updated_weight_data[resolution]["weight"] = updated_weight_data[resolution]["max_weight"]
@@ -193,7 +193,7 @@ class Algorithm(Base):
                     self._signal = "BUY"
 
             # Check to see if we sell
-            elif data['daily_close'] < data['sma_low'][resolution]:
+            elif data['hourly'] < data['sma_low'][resolution]:
                 if not self.get_current_portfolio()[resolution]["invested"] or \
                         updated_weight_data[resolution]["max_weight"] == 0:
                     continue
@@ -207,12 +207,12 @@ class Algorithm(Base):
 
         if self._signal is not None:
             self.update_signals(self.buy_sell_signals(self.get_signal(), self.get_equity(), self.get_total_invested(),
-                                                      data['daily_open'], data['daily_close'],
-                                                      datetime.date.today().strftime("%A %d. %B %Y")))
+                                                      data['hourly'],
+                                                      datetime.datetime.now().strftime(self.get_date_modifier())))
 
         # Get and Update Backtest Stats and Benchmarks
         n.Benchmark().benchmark_daily()
-        bt = t.Backtest(self.get_universe())
+        bt = t.Backtest()
         bt.backtest()
         d.Database().prune_database()
 
@@ -226,7 +226,7 @@ class Algorithm(Base):
 
         return self.get_summary_data()
 
-    def buy_sell_signals(self, signal, ticker, total_invested, open, close, date):
+    def buy_sell_signals(self, signal, ticker, total_invested, close, date):
         """
         Calculates and returns buy and sell signals
         :return: signals (JSON Object)
@@ -235,8 +235,7 @@ class Algorithm(Base):
             "signal": signal,
             "ticker": ticker,
             "total_invested": total_invested,
-            "opening_price": open,
-            "closing_price": close,
+            "closing": close,
             "date": date
         }
 
