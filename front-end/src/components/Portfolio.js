@@ -1,6 +1,5 @@
 import React from 'react';
 import { PieChart } from 'react-minimal-pie-chart';
-import axios from 'axios';
 import {authFetch} from "./App";
 
 const defaultLabelStyle = {
@@ -21,7 +20,9 @@ class Portfolio extends React.Component {
     this.state = {
         ticker: "",
         percent_invested: 0,
-        isLoading: true
+        isLoading: true,
+        dataAvailable: true,
+        serverError: false
       }
   }
 
@@ -33,15 +34,26 @@ class Portfolio extends React.Component {
           }
         }).then( response => response.json()
          ).then( data => {
-             console.log(data.result.at(-1).ticker);
-            this.setState({
-                ticker: data.result.at(-1).ticker,
-                percent_invested: data.result.at(-1).total_invested,
+            if (data.result.length === 0) {
+              this.setState({
+                dataAvailable: false,
                 isLoading: false
-            });
+              });
+            } else {
+              console.log(data.result.at(-1).ticker);
+              this.setState({
+                  ticker: data.result.at(-1).ticker,
+                  percent_invested: data.result.at(-1).total_invested,
+                  isLoading: false
+              });
+            }
       })
       .catch( (error) => {
         console.log(error);
+        this.setState({
+          serverError: true,
+          isLoading: false
+        });
       }); 
   }
 
@@ -62,8 +74,15 @@ class Portfolio extends React.Component {
   
   render() {
     if (this.state.isLoading) {
-      return (<p>Data loading...</p>);
-    } else {
+      return (<h3>Data loading...</h3>);
+    } 
+    else if (!(this.state.dataAvailable)) {
+      return (<h3>No data currently available</h3>);
+    }
+    else if (this.state.serverError) {
+      return (<h3>Server error - could not retrieve the requested data</h3>);
+    }
+    else {
       return (
         <div className="portfolio content">
           <h1>Current Portfolio Holdings</h1>

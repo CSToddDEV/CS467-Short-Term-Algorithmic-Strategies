@@ -23,7 +23,8 @@ function SignUp(props) {
       this.state = {
         email: '',
         phone: '',
-        password: ''
+        password: '',
+        submitError: false
       }
   
       this.handleChange = this.handleChange.bind(this);
@@ -37,7 +38,6 @@ function SignUp(props) {
     }
   
     handleSubmit(event) {
-      // alert('Email submitted: ' + this.state.email + ' / Phone # submitted: ' + this.state.phone);
       event.preventDefault();
       let account = {
           'email' : this.state.email,
@@ -61,6 +61,12 @@ function SignUp(props) {
            alert('Bad Username or Password, or Already Registered');
           }
         })
+        .catch((error) => {
+          console.log(error);
+          this.setState({
+            submitError: true
+          });
+        });
       }
       else if (event.nativeEvent.submitter.value === "Login") {
         fetch('/api/authentication/login/', {
@@ -79,6 +85,12 @@ function SignUp(props) {
                 alert('Bad Username or Password');
           }
         })
+        .catch((error) => {
+          console.log(error);
+          this.setState({
+            submitError: true
+          });
+        });
       }
     }
   
@@ -87,24 +99,27 @@ function SignUp(props) {
          return <Redirect to='/3stat' />;
       }
       return (
-        <form onSubmit={this.handleSubmit}>
-          <label>
-            Email:
-            <input name="email" type="text" value={this.state.email} onChange={this.handleChange} />
-          </label>
-          <br></br>
-          <label>
-            Phone #:
-            <input name="phone" type="text" value={this.state.phone} onChange={this.handleChange} />
-          </label>
-          <br></br>
-          <label>
-            Password:
-            <input name="password" type="password" value={this.state.password} onChange={this.handleChange} />
-          </label>
-          <br></br>
-          <input type="submit" value="Sign Up" /><input type="submit" value="Login" />
-        </form>
+        <div className="signupContent">
+          <form onSubmit={this.handleSubmit}>
+            <label>
+              Email:
+              <input name="email" type="text" value={this.state.email} onChange={this.handleChange} />
+            </label>
+            <br></br>
+            <label>
+              Phone #:
+              <input name="phone" type="text" value={this.state.phone} onChange={this.handleChange} />
+            </label>
+            <br></br>
+            <label>
+              Password:
+              <input name="password" type="password" value={this.state.password} onChange={this.handleChange} />
+            </label>
+            <br></br>
+            <input type="submit" value="Sign Up" /><input type="submit" value="Login" />
+          </form>
+          {this.state.submitError ? <p className="errorMsg">Either a server error has occurred or incorrect inputs have been entered. Please ensure that a valid email and/or phone number have been entered.</p> : null}
+        </div>
       );
     }
   }

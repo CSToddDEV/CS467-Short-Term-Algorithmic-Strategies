@@ -6,17 +6,19 @@ import Unsubscribe from './Unsubscribe';
 import SignalData from './SignalData';
 import Portfolio from './Portfolio';
 import Performance from './Performance';
+import Page404 from './Page404';
 
 function Main(props) {
     return (
       <Switch>
-          <Route exact path='/3stat' component={Home}></Route>
-          <Route exact path='/3stat/about' component={About}></Route>
-          <Route exact path='/3stat/signup' render={ () => <SignUp logged_in={props.logged_in} update_login={props.update_login} />}></Route>
-          <Route exact path='/3stat/unsubscribe' component={Unsubscribe}></Route>
-          <Route exact path='/3stat/data' component={SignalData}></Route>
-          <Route exact path='/3stat/portfolio' component={Portfolio}></Route>
-          <Route exact path='/3stat/performance' component={Performance}></Route>
+        <Route exact path='/3stat' component={Home}></Route>
+        <Route exact path='/3stat/about' component={About}></Route>
+        <Route exact path='/3stat/signup' render={ () => <SignUp logged_in={props.logged_in} update_login={props.update_login} />}></Route>
+        <Route exact path='/3stat/unsubscribe' component={Unsubscribe}></Route>
+        <Route exact path='/3stat/data' component={SignalData}></Route>
+        <Route exact path='/3stat/portfolio' component={Portfolio}></Route>
+        <Route exact path='/3stat/performance' component={Performance}></Route>
+        <Route component={Page404}></Route>
       </Switch>
     );
   }
