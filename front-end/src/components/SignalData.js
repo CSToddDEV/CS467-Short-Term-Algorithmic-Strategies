@@ -19,7 +19,8 @@ class DataTable extends React.Component {
     super(props);
     this.state = {
         signals: [],
-        isLoading: true
+        isLoading: true,
+        serverError: false
       }
   }
 
@@ -37,6 +38,10 @@ class DataTable extends React.Component {
             })
       }).catch( (error) => {
         console.log(error);
+        this.setState({
+          serverError: true,
+          isLoading: false
+        });
       });
   }
 
@@ -71,7 +76,10 @@ class DataTable extends React.Component {
       return (
         <p>Data is loading...</p>
       );
-    } else {
+    } else if (this.state.serverError) {
+      return (<h3>Server error - unable to retrieve the data</h3>);
+    } 
+    else {
       let table_headers = this.generateHeaders();
       let table_rows = this.generateRows();
 

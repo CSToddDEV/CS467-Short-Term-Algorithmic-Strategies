@@ -5,15 +5,16 @@ from dateutil.relativedelta import relativedelta
 import datetime
 import db as d
 import av as a
+from base import Base
 
 
-class Benchmark:
+class Benchmark(Base):
     """
     Class for adding and tracking Benchmarks for 3STAT
     """
     def __init__(self, backtest=False):
+        super().__init__()
         self._benchmarks = ["SPY"]
-        self._date_modifier = "%A %d. %B %Y"
         self._today = datetime.date.today().strftime(self.get_date_modifier())
 
     # Get Methods
@@ -59,8 +60,10 @@ class Benchmark:
 
         # Fill Backtest Dictionary
         backfill_data = self.pull_backtest_backfill_data()
+        # print(backfill_data)
 
         while self.make_pretty_date(today) != self.make_pretty_date(backtest_date):
+            # print("BACKTEST DATE: ", self.make_pretty_date(backtest_date), " || TODAY: ", self.make_pretty_date(today))
 
             # If Add Data Point to DB
             self.backfill_benchmark_data_point(backfill_data, backtest_date)
@@ -99,17 +102,18 @@ class Benchmark:
         Add a backfill data point for benchmark data
         """
         # Set OG date
+        date.replace(hour=12)
         og_date = date
         trading_day = True
         data_point = {
-            "date": self.make_pretty_date(og_date)
+            "date": self.make_api_pretty_date(og_date)
         }
 
         for ticker in self.get_benchmarks():
             # Make Sure There Is Data For The Day
-            while date.strftime('%Y-%m-%d') not in data[ticker]["daily_data"].keys():
-                date = date - datetime.timedelta(days=1)
+            while self.make_api_pretty_date(date) not in data[ticker]["daily_data"].keys():
                 trading_day = False
+                date = date - relativedelta(days=1)
             dp_date = date.strftime('%Y-%m-%d')
 
             # Update Data Point

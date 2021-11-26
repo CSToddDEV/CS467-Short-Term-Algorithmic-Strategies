@@ -1,11 +1,8 @@
-# 3STAT Algorithm - weights.py
-# Fall 2021 CS 463
-
 weight_1 = {
     3: {"weight": 0, "max_weight": 0},
-    5: {"weight": 0, "max_weight": 95},
-    10: {"weight": 0, "max_weight": 0},
-    20: {"weight": 0, "max_weight": 0},
+    5: {"weight": 0, "max_weight": 35},
+    10: {"weight": 0, "max_weight": 50},
+    20: {"weight": 0, "max_weight": 10},
     30: {"weight": 0, "max_weight": 0},
     62: {"weight": 0, "max_weight": 0},
     125: {"weight": 0, "max_weight": 0},
@@ -13,20 +10,20 @@ weight_1 = {
 }
 
 weight_2 = {
-    3: {"weight": 0, "max_weight": 40},
-    5: {"weight": 0, "max_weight": 55},
-    10: {"weight": 0, "max_weight": 0},
-    20: {"weight": 0, "max_weight": 0},
-    30: {"weight": 0, "max_weight": 0},
+    3: {"weight": 0, "max_weight": 0},
+    5: {"weight": 0, "max_weight": 20},
+    10: {"weight": 0, "max_weight": 25},
+    20: {"weight": 0, "max_weight": 25},
+    30: {"weight": 0, "max_weight": 25},
     62: {"weight": 0, "max_weight": 0},
     125: {"weight": 0, "max_weight": 0},
     250: {"weight": 0, "max_weight": 0}
 }
 
 weight_3 = {
-    3: {"weight": 0, "max_weight": 65},
+    3: {"weight": 0, "max_weight": 15},
     5: {"weight": 0, "max_weight": 30},
-    10: {"weight": 0, "max_weight": 0},
+    10: {"weight": 0, "max_weight": 50},
     20: {"weight": 0, "max_weight": 0},
     62: {"weight": 0, "max_weight": 0},
     125: {"weight": 0, "max_weight": 0},
@@ -44,14 +41,14 @@ universe2 = [
     'UDOW',
     'UMDD',
     'URTY',
-    'NAIL',
+    'EDC',
+    'LBJ',
+    'RETL',
     'CURE',
     'MIDU',
-    'DRN',
-    'WANT',
-    'DUSL',
-    'UBOT',
-    'UTSL'
+    'LABU',
+    'FNGU',
+    'NRGU'
 ]
 
 universe1 = [
@@ -61,10 +58,4 @@ universe1 = [
     "FAS",
     "UDOW",
     "SOXL"
-]
-
-universe3 = [
-    "TQQQ",
-    "UPRO",
-    "TNA"
 ]

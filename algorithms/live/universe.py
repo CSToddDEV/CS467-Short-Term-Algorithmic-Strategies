@@ -1,28 +1,26 @@
 # 3STAT Algorithm - universe.py
 # Fall 2021 CS 463
 
+from base import Base
 import backtest as b
-import weights as w
 import datetime
 import db as d
 import av as a
 
 
-class Universe:
+class Universe(Base):
     """
     Basic Universe Class
     """
-    def __init__(self, weights, force_universe=False):
-        self._date_modifier = "%A %d. %B %Y"
-        self._weights = weights
-        self._universe = w.universe2
+    def __init__(self, daily_check=False, force_universe=False, today=True):
+        super().__init__()
+        self._daily_check = daily_check
         self._summary_data = {}
         self._universe_check = False
         self._new_focus = False
         self._old_focus = None
         self._force_universe = force_universe
-        self._date_modifier = "%A %d. %B %Y"
-        self._date = datetime.date.today().strftime(self.get_date_modifier())
+        self._date = datetime.datetime.now().replace(minute=0).strftime(self.get_date_modifier()) if today is True else today
         self._focus = self.select_universe()
 
     def select_universe(self):
@@ -35,40 +33,40 @@ class Universe:
         equity = self.get_current_equity()
 
         # If first of month get new focus
-        if (datetime.date.today().day == 1) or (equity is None) or self._force_universe:
+        if (datetime.date.today().day == 1 and self._daily_check) or (equity is None) or self._force_universe:
             self.set_universe_check()
             equity = self.get_new_focus()
 
             if equity != self.get_current_equity():
                 # Update Data for old ticker in Database
-                equity_data = a.Data(self.get_current_equity(), self.get_weights()).daily_data()
-                b.Backtest(self.get_universe(), self.get_weights()).data_point(self.get_old_focus(),
-                                                                               equity_data,
-                                                                               self.get_datetime_object_from_date(self.get_date()),
-                                                                               True)
+                equity_data = a.Data(self.get_current_equity()).hourly_data()
+                b.Backtest().data_point(self.get_old_focus(),
+                                                           equity_data,
+                                                           self.get_datetime_object_from_date(self.get_date()),
+                                                           True)
 
                 # SELL SIGNAL HERE
-                data = a.Data(self.get_current_equity(), self.get_weights())
+                data = a.Data(self.get_current_equity())
                 data.pull_close()
                 ticker_data = data.get_data()
                 self.update_signals(self.buy_sell_signals("SELL", self.get_current_equity(), 0,
                                                           ticker_data["daily_open"],
                                                           ticker_data["daily_close"],
-                                                          datetime.date.today().strftime("%A %d. %B %Y")))
+                                                          datetime.datetime.now().strftime(self.get_date_modifier())))
                 self.set_new_focus()
                 self.set_current_equity(equity)
-                equity_data = a.Data(self.get_current_equity(), self.get_weights()).daily_data()
-                b.Backtest(self.get_universe(), self.get_weights()).data_point(self.get_current_equity(),
-                                                                               equity_data,
-                                                                               self.get_datetime_object_from_date(self.get_date()),
-                                                                               True, True)
+                equity_data = a.Data(self.get_current_equity()).hourly_data()
+                b.Backtest().data_point(self.get_current_equity(),
+                                                           equity_data,
+                                                           self.get_datetime_object_from_date(self.get_date()),
+                                                           True, True)
                 data_set = True
 
         if not data_set:
-            equity_data = a.Data(self.get_current_equity(), self.get_weights()).daily_data()
-            b.Backtest(self.get_universe(), self.get_weights()).data_point(self.get_current_equity(),
-                                                                           equity_data,
-                                                                           self.get_datetime_object_from_date(self.get_date()))
+            equity_data = a.Data(self.get_current_equity()).hourly_data()
+            b.Backtest().data_point(self.get_current_equity(),
+                                                       equity_data,
+                                                       self.get_datetime_object_from_date(self.get_date()))
         # Return current focus
         return equity
 
@@ -122,15 +120,17 @@ class Universe:
         # Get all the tickers we are tracking
         universe = self.get_universe()
         new_focus = None
+        today = self.make_api_pretty_date(datetime.date.today())
 
         # Cycle through the tickers in the Universe and choose the next one to focus on
         for ticker in universe:
             if new_focus is None:
-                new_focus = [ticker, a.Data(ticker, self.get_weights()).new_focus()]
+                new_focus = [ticker,
+                             a.Data(ticker).volatility_indicator(today)]
             else:
-                bottom_band = a.Data(ticker, self.get_weights()).new_focus()
-                if bottom_band < new_focus[1]:
-                    new_focus = [ticker, bottom_band]
+                volatility = a.Data(ticker).volatility_indicator(today)
+                if volatility > new_focus[1]:
+                    new_focus = [ticker, volatility]
 
         return new_focus[0]
 

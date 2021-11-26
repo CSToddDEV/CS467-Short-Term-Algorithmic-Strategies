@@ -1,9 +1,6 @@
-# 3STAT Algorithm - weights.py
-# Fall 2021 CS 463
-
 weight_1 = {
-    3: {"weight": 0, "max_weight": 0},
-    5: {"weight": 0, "max_weight": 95},
+    3: {"weight": 0, "max_weight": 65},
+    5: {"weight": 0, "max_weight": 30},
     10: {"weight": 0, "max_weight": 0},
     20: {"weight": 0, "max_weight": 0},
     30: {"weight": 0, "max_weight": 0},
@@ -13,10 +10,10 @@ weight_1 = {
 }
 
 weight_2 = {
-    3: {"weight": 0, "max_weight": 40},
-    5: {"weight": 0, "max_weight": 55},
-    10: {"weight": 0, "max_weight": 0},
-    20: {"weight": 0, "max_weight": 0},
+    3: {"weight": 0, "max_weight": 25},
+    5: {"weight": 0, "max_weight": 25},
+    10: {"weight": 0, "max_weight": 25},
+    20: {"weight": 0, "max_weight": 20},
     30: {"weight": 0, "max_weight": 0},
     62: {"weight": 0, "max_weight": 0},
     125: {"weight": 0, "max_weight": 0},
@@ -24,11 +21,21 @@ weight_2 = {
 }
 
 weight_3 = {
-    3: {"weight": 0, "max_weight": 65},
-    5: {"weight": 0, "max_weight": 30},
-    10: {"weight": 0, "max_weight": 0},
-    20: {"weight": 0, "max_weight": 0},
+    3: {"weight": 0, "max_weight": 0},
+    5: {"weight": 0, "max_weight": 0},
+    10: {"weight": 0, "max_weight": 30},
+    20: {"weight": 0, "max_weight": 65},
     62: {"weight": 0, "max_weight": 0},
+    125: {"weight": 0, "max_weight": 0},
+    250: {"weight": 0, "max_weight": 0}
+}
+
+weight_4 = {
+    3: {"weight": 0, "max_weight": 0},
+    5: {"weight": 0, "max_weight": 25},
+    10: {"weight": 0, "max_weight": 25},
+    20: {"weight": 0, "max_weight": 25},
+    62: {"weight": 0, "max_weight": 20},
     125: {"weight": 0, "max_weight": 0},
     250: {"weight": 0, "max_weight": 0}
 }
@@ -63,8 +70,4 @@ universe1 = [
     "SOXL"
 ]
 
-universe3 = [
-    "TQQQ",
-    "UPRO",
-    "TNA"
-]
+# Your New Python File

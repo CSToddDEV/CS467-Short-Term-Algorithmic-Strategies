@@ -7,3 +7,4 @@ HOST = 'localhost'
 PORT = 27017
 USERNAME = 'admin'
 PASSWORD = 'password'
+

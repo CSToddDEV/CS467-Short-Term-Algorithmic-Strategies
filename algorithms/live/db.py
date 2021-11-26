@@ -2,17 +2,17 @@
 # Fall 2021 CS 463
 from KEYS_AND_CONSTANTS import DB_NAME, HOST, PORT, USERNAME, PASSWORD
 from dateutil.relativedelta import relativedelta
+from base import Base
 import backtest as b
-import weights as w
 import pymongo
-import json
 
 
-class Database:
+class Database(Base):
     """
     Class for interacting with MongoDB
     """
     def __init__(self):
+        super().__init__()
         self._client = pymongo.MongoClient(host=HOST, port=PORT, username=USERNAME,
                                            password=PASSWORD, authSource="admin")
         self._db = self._client[DB_NAME]
@@ -47,7 +47,9 @@ class Database:
         """
         Checks if there is a backtest data point and updates if there is
         """
+
         if self.get_db()["backtest_data_3stat_v1.0"].find_one({'date': date}):
+
             self.get_db()["backtest_data_3stat_v1.0"].update_one({'date': date}, {'$set': {**data}})
         else:
             self.get_db()["backtest_data_3stat_v1.0"].insert_one(data)
@@ -62,6 +64,7 @@ class Database:
         """
         Returns the data points for a specific date
         """
+        # print(date)
         return self.get_db()["backtest_data_3stat_v1.0"].find({"date": date})
 
     def update_stats_collection(self, data):
@@ -93,14 +96,14 @@ class Database:
 
         # Prune Backtest Data
         data = self.get_db()["backtest_data_3stat_v1.0"].find()
-        bto = b.Backtest(w.universe2, w.weight_3)
+        bto = b.Backtest()
         one_year = bto.get_today_datetime_object() - relativedelta(years=1)
         one_year.replace(day=1)
         for point in data:
             all_points = self.get_db()["backtest_data_3stat_v1.0"].find(point)
             while len(list(all_points)) > 1:
                 self.get_db()["backtest_data_3stat_v1.0"].delete_one(all_points[0])
-            if bto.get_datetime_object_from_date(point["date"]) < one_year or "trading_day" not in point.keys():
+            if bto.get_datetime_object_from_backtest_date(point["date"]) < one_year or "trading_day" not in point.keys():
                 self.get_db()["backtest_data_3stat_v1.0"].delete_one(point)
 
     def prune_first_database(self):
@@ -108,7 +111,7 @@ class Database:
         Prunes the signals database to a total of 10 signals
         """
         # Prune Backtest Data
-        bto = b.Backtest(w.universe2, w.weight_3)
+        bto = b.Backtest()
         one_year = bto.get_today_datetime_object() - relativedelta(years=1)
         one_year = one_year.replace(day=1)
         while one_year < bto.get_today_datetime_object():
@@ -125,5 +128,17 @@ class Database:
         """
         return self.get_db()["benchmarks"].find_one({"date": date})
 
+    def drop_db(self):
+        """
+        Drops DB Collections
+        """
+        self.get_db()["backtest_data_3stat_v1.0"].remove()
+        self.get_db()["benchmarks"].remove()
+        self.get_db()["signals"].remove()
+        self.get_db()["stats"].remove()
 
-
+    def drop_benchmarks(self):
+        """
+        Dropd Benchmark Collection
+        """
+        self.get_db()["benchmarks"].remove()
