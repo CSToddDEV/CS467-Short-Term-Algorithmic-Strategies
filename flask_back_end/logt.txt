@@ -1,0 +1,634 @@
+nohup: ignoring input
+ * Serving Flask app 'app' (lazy loading)
+ * Environment: production
+   WARNING: This is a development server. Do not use it in a production deployment.
+   Use a production WSGI server instead.
+ * Debug mode: on
+ * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 740-269-980
+127.0.0.1 - - [14/Nov/2021 20:13:23] "GET /3stat/stats/ HTTP/1.0" 200 -
+127.0.0.1 - - [14/Nov/2021 20:13:34] "GET /3stat/stats/ HTTP/1.0" 200 -
+127.0.0.1 - - [14/Nov/2021 20:13:54] "POST /api/authentication/login/ HTTP/1.0" 200 -
+127.0.0.1 - - [14/Nov/2021 20:13:56] "GET /3stat/signals/ HTTP/1.0" 200 -
+127.0.0.1 - - [15/Nov/2021 05:30:13] "GET /3stat/stats/ HTTP/1.0" 200 -
+127.0.0.1 - - [15/Nov/2021 05:31:20] "GET /3stat/stats/ HTTP/1.0" 200 -
+127.0.0.1 - - [15/Nov/2021 05:31:24] "GET /3stat/stats/ HTTP/1.0" 200 -
+127.0.0.1 - - [15/Nov/2021 05:38:38] "GET /3stat/stats/ HTTP/1.0" 200 -
+127.0.0.1 - - [15/Nov/2021 06:16:24] "POST /api/authentication/register/ HTTP/1.0" 200 -
+127.0.0.1 - - [15/Nov/2021 06:16:36] "GET /3stat/signals/ HTTP/1.0" 200 -
+127.0.0.1 - - [15/Nov/2021 06:16:38] "GET /3stat/signals/ HTTP/1.0" 200 -
+127.0.0.1 - - [15/Nov/2021 06:16:54] "GET /3stat/signals/ HTTP/1.0" 200 -
+127.0.0.1 - - [15/Nov/2021 06:17:01] "GET /3stat/stats/ HTTP/1.0" 200 -
+127.0.0.1 - - [15/Nov/2021 06:17:15] "GET /3stat/signals/ HTTP/1.0" 200 -
+127.0.0.1 - - [15/Nov/2021 06:17:18] "GET /3stat/stats/ HTTP/1.0" 200 -
+127.0.0.1 - - [15/Nov/2021 20:53:27] "GET /3stat/signals/ HTTP/1.0" 200 -
+127.0.0.1 - - [15/Nov/2021 20:53:34] "GET /3stat/signals/ HTTP/1.0" 200 -
+127.0.0.1 - - [15/Nov/2021 20:53:38] "GET /3stat/stats/ HTTP/1.0" 200 -
+127.0.0.1 - - [15/Nov/2021 20:53:42] "GET /3stat/stats/ HTTP/1.0" 200 -
+127.0.0.1 - - [15/Nov/2021 20:53:47] "GET /3stat/stats/ HTTP/1.0" 200 -
+127.0.0.1 - - [15/Nov/2021 20:53:58] "GET /3stat/stats/ HTTP/1.0" 200 -
+127.0.0.1 - - [15/Nov/2021 21:12:19] "POST /api/authentication/register/ HTTP/1.0" 500 -
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 2091, in __call__
+    return self.wsgi_app(environ, start_response)
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 2076, in wsgi_app
+    response = self.handle_exception(e)
+  File "/usr/local/lib/python3.6/dist-packages/flask_restful/__init__.py", line 271, in error_router
+    return original_handler(e)
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 2073, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 1518, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/usr/local/lib/python3.6/dist-packages/flask_restful/__init__.py", line 271, in error_router
+    return original_handler(e)
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/usr/local/lib/python3.6/dist-packages/flask_restful/__init__.py", line 467, in wrapper
+    resp = resource(*args, **kwargs)
+  File "/usr/local/lib/python3.6/dist-packages/flask/views.py", line 84, in view
+    return current_app.ensure_sync(self.dispatch_request)(*args, **kwargs)
+  File "/usr/local/lib/python3.6/dist-packages/flask_restful/__init__.py", line 582, in dispatch_request
+    resp = meth(*args, **kwargs)
+  File "/root/3stat/flask_back_end/api/auth.py", line 39, in post
+    post_user.save()
+  File "/root/3stat/flask_back_end/models/users.py", line 71, in save
+    super(Users, self).save(*args, **kwargs)
+  File "/usr/local/lib/python3.6/dist-packages/mongoengine/document.py", line 387, in save
+    self.validate(clean=clean)
+  File "/usr/local/lib/python3.6/dist-packages/mongoengine/base/document.py", line 432, in validate
+    raise ValidationError(message, errors=errors)
+mongoengine.errors.ValidationError: ValidationError (Users:None) (ERROR: `` Is An Invalid Phone Number.: ['phone'])
+127.0.0.1 - - [15/Nov/2021 21:12:23] "POST /api/authentication/register/ HTTP/1.0" 500 -
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 2091, in __call__
+    return self.wsgi_app(environ, start_response)
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 2076, in wsgi_app
+    response = self.handle_exception(e)
+  File "/usr/local/lib/python3.6/dist-packages/flask_restful/__init__.py", line 271, in error_router
+    return original_handler(e)
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 2073, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 1518, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/usr/local/lib/python3.6/dist-packages/flask_restful/__init__.py", line 271, in error_router
+    return original_handler(e)
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/usr/local/lib/python3.6/dist-packages/flask_restful/__init__.py", line 467, in wrapper
+    resp = resource(*args, **kwargs)
+  File "/usr/local/lib/python3.6/dist-packages/flask/views.py", line 84, in view
+    return current_app.ensure_sync(self.dispatch_request)(*args, **kwargs)
+  File "/usr/local/lib/python3.6/dist-packages/flask_restful/__init__.py", line 582, in dispatch_request
+    resp = meth(*args, **kwargs)
+  File "/root/3stat/flask_back_end/api/auth.py", line 39, in post
+    post_user.save()
+  File "/root/3stat/flask_back_end/models/users.py", line 71, in save
+    super(Users, self).save(*args, **kwargs)
+  File "/usr/local/lib/python3.6/dist-packages/mongoengine/document.py", line 387, in save
+    self.validate(clean=clean)
+  File "/usr/local/lib/python3.6/dist-packages/mongoengine/base/document.py", line 432, in validate
+    raise ValidationError(message, errors=errors)
+mongoengine.errors.ValidationError: ValidationError (Users:None) (ERROR: `` Is An Invalid Phone Number.: ['phone'])
+127.0.0.1 - - [15/Nov/2021 21:12:37] "POST /api/authentication/register/ HTTP/1.0" 500 -
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 2091, in __call__
+    return self.wsgi_app(environ, start_response)
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 2076, in wsgi_app
+    response = self.handle_exception(e)
+  File "/usr/local/lib/python3.6/dist-packages/flask_restful/__init__.py", line 271, in error_router
+    return original_handler(e)
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 2073, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 1518, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/usr/local/lib/python3.6/dist-packages/flask_restful/__init__.py", line 271, in error_router
+    return original_handler(e)
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/usr/local/lib/python3.6/dist-packages/flask_restful/__init__.py", line 467, in wrapper
+    resp = resource(*args, **kwargs)
+  File "/usr/local/lib/python3.6/dist-packages/flask/views.py", line 84, in view
+    return current_app.ensure_sync(self.dispatch_request)(*args, **kwargs)
+  File "/usr/local/lib/python3.6/dist-packages/flask_restful/__init__.py", line 582, in dispatch_request
+    resp = meth(*args, **kwargs)
+  File "/root/3stat/flask_back_end/api/auth.py", line 39, in post
+    post_user.save()
+  File "/root/3stat/flask_back_end/models/users.py", line 71, in save
+    super(Users, self).save(*args, **kwargs)
+  File "/usr/local/lib/python3.6/dist-packages/mongoengine/document.py", line 387, in save
+    self.validate(clean=clean)
+  File "/usr/local/lib/python3.6/dist-packages/mongoengine/base/document.py", line 432, in validate
+    raise ValidationError(message, errors=errors)
+mongoengine.errors.ValidationError: ValidationError (Users:None) (ERROR: `123` Is An Invalid Phone Number.: ['phone'])
+127.0.0.1 - - [15/Nov/2021 21:12:57] "POST /api/authentication/register/ HTTP/1.0" 200 -
+127.0.0.1 - - [15/Nov/2021 21:13:02] "GET /3stat/stats/ HTTP/1.0" 200 -
+127.0.0.1 - - [15/Nov/2021 21:13:21] "GET /3stat/signals/ HTTP/1.0" 200 -
+127.0.0.1 - - [15/Nov/2021 21:13:23] "GET /3stat/signals/ HTTP/1.0" 200 -
+127.0.0.1 - - [16/Nov/2021 01:05:18] "GET /3stat/signals/ HTTP/1.0" 401 -
+127.0.0.1 - - [16/Nov/2021 01:05:18] "GET /3stat/signals/ HTTP/1.0" 401 -
+127.0.0.1 - - [16/Nov/2021 01:05:19] "GET /3stat/signals/ HTTP/1.0" 401 -
+127.0.0.1 - - [16/Nov/2021 01:05:19] "GET /3stat/signals/ HTTP/1.0" 401 -
+127.0.0.1 - - [16/Nov/2021 01:09:25] "GET /3stat/stats/ HTTP/1.0" 200 -
+127.0.0.1 - - [16/Nov/2021 01:09:49] "GET /3stat/stats/ HTTP/1.0" 200 -
+127.0.0.1 - - [16/Nov/2021 01:11:13] "POST /api/authentication/register/ HTTP/1.0" 200 -
+127.0.0.1 - - [16/Nov/2021 01:11:19] "GET /3stat/stats/ HTTP/1.0" 200 -
+127.0.0.1 - - [16/Nov/2021 01:11:38] "POST /api/authentication/login/ HTTP/1.0" 200 -
+127.0.0.1 - - [16/Nov/2021 01:11:49] "GET /3stat/signals/ HTTP/1.0" 200 -
+127.0.0.1 - - [16/Nov/2021 01:11:54] "GET /3stat/signals/ HTTP/1.0" 200 -
+127.0.0.1 - - [16/Nov/2021 01:12:01] "GET /3stat/signals/ HTTP/1.0" 200 -
+127.0.0.1 - - [16/Nov/2021 01:13:39] "GET /3stat/stats/ HTTP/1.0" 200 -
+127.0.0.1 - - [16/Nov/2021 01:13:41] "GET /3stat/signals/ HTTP/1.0" 200 -
+127.0.0.1 - - [16/Nov/2021 01:13:45] "GET /3stat/signals/ HTTP/1.0" 200 -
+127.0.0.1 - - [16/Nov/2021 01:13:45] "GET /3stat/signals/ HTTP/1.0" 200 -
+127.0.0.1 - - [16/Nov/2021 01:13:46] "GET /3stat/stats/ HTTP/1.0" 200 -
+127.0.0.1 - - [16/Nov/2021 01:18:00] "GET /3stat/signals/ HTTP/1.0" 200 -
+127.0.0.1 - - [16/Nov/2021 01:18:03] "GET /3stat/signals/ HTTP/1.0" 200 -
+127.0.0.1 - - [16/Nov/2021 01:18:04] "GET /3stat/stats/ HTTP/1.0" 200 -
+127.0.0.1 - - [16/Nov/2021 01:20:32] "GET /3stat/signals/ HTTP/1.0" 200 -
+127.0.0.1 - - [16/Nov/2021 01:21:38] "GET /3stat/stats/ HTTP/1.0" 200 -
+127.0.0.1 - - [16/Nov/2021 17:36:43] "GET /3stat/signals/ HTTP/1.0" 200 -
+127.0.0.1 - - [16/Nov/2021 17:38:03] "GET /3stat/signals/ HTTP/1.0" 200 -
+127.0.0.1 - - [16/Nov/2021 17:38:06] "GET /3stat/stats/ HTTP/1.0" 200 -
+127.0.0.1 - - [16/Nov/2021 17:38:37] "GET /3stat/signals/ HTTP/1.0" 200 -
+127.0.0.1 - - [16/Nov/2021 17:38:39] "GET /3stat/signals/ HTTP/1.0" 200 -
+127.0.0.1 - - [16/Nov/2021 17:38:41] "GET /3stat/stats/ HTTP/1.0" 200 -
+127.0.0.1 - - [16/Nov/2021 18:29:10] "GET /3stat/stats/ HTTP/1.0" 200 -
+127.0.0.1 - - [16/Nov/2021 18:29:29] "GET /3stat/stats/ HTTP/1.0" 200 -
+127.0.0.1 - - [16/Nov/2021 18:29:56] "POST /api/authentication/login/ HTTP/1.0" 500 -
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.6/dist-packages/mongoengine/queryset/base.py", line 266, in get
+    result = next(queryset)
+  File "/usr/local/lib/python3.6/dist-packages/mongoengine/queryset/base.py", line 1572, in __next__
+    raw_doc = next(self._cursor)
+  File "/usr/local/lib/python3.6/dist-packages/pymongo/cursor.py", line 1246, in next
+    raise StopIteration
+StopIteration
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 2091, in __call__
+    return self.wsgi_app(environ, start_response)
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 2076, in wsgi_app
+    response = self.handle_exception(e)
+  File "/usr/local/lib/python3.6/dist-packages/flask_restful/__init__.py", line 271, in error_router
+    return original_handler(e)
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 2073, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 1518, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/usr/local/lib/python3.6/dist-packages/flask_restful/__init__.py", line 271, in error_router
+    return original_handler(e)
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/usr/local/lib/python3.6/dist-packages/flask_restful/__init__.py", line 467, in wrapper
+    resp = resource(*args, **kwargs)
+  File "/usr/local/lib/python3.6/dist-packages/flask/views.py", line 84, in view
+    return current_app.ensure_sync(self.dispatch_request)(*args, **kwargs)
+  File "/usr/local/lib/python3.6/dist-packages/flask_restful/__init__.py", line 582, in dispatch_request
+    resp = meth(*args, **kwargs)
+  File "/root/3stat/flask_back_end/api/auth.py", line 72, in post
+    user = Users.objects.get(email=data.get('email'))
+  File "/usr/local/lib/python3.6/dist-packages/mongoengine/queryset/base.py", line 269, in get
+    raise queryset._document.DoesNotExist(msg)
+models.users.DoesNotExist: Users matching query does not exist.
+127.0.0.1 - - [16/Nov/2021 18:30:10] "POST /api/authentication/login/ HTTP/1.0" 200 -
+127.0.0.1 - - [16/Nov/2021 18:30:14] "GET /3stat/signals/ HTTP/1.0" 200 -
+127.0.0.1 - - [16/Nov/2021 18:30:18] "GET /3stat/signals/ HTTP/1.0" 200 -
+127.0.0.1 - - [16/Nov/2021 18:30:46] "GET /3stat/stats/ HTTP/1.0" 200 -
+127.0.0.1 - - [16/Nov/2021 18:30:48] "GET /3stat/signals/ HTTP/1.0" 200 -
+127.0.0.1 - - [16/Nov/2021 18:30:49] "GET /3stat/signals/ HTTP/1.0" 200 -
+127.0.0.1 - - [16/Nov/2021 18:47:50] "GET /3stat/stats/ HTTP/1.0" 200 -
+127.0.0.1 - - [16/Nov/2021 19:30:37] "GET /3stat/stats/ HTTP/1.0" 200 -
+127.0.0.1 - - [16/Nov/2021 19:37:47] "GET /3stat/stats/ HTTP/1.0" 200 -
+127.0.0.1 - - [16/Nov/2021 19:37:54] "GET /3stat/stats/ HTTP/1.0" 200 -
+127.0.0.1 - - [16/Nov/2021 19:38:00] "GET /3stat/stats/ HTTP/1.0" 200 -
+127.0.0.1 - - [16/Nov/2021 23:54:14] "GET /3stat/signals HTTP/1.0" 308 -
+127.0.0.1 - - [16/Nov/2021 23:54:14] "GET /3stat/signals/ HTTP/1.0" 401 -
+127.0.0.1 - - [16/Nov/2021 23:54:27] "POST /api/authentication/login/ HTTP/1.0" 200 -
+127.0.0.1 - - [16/Nov/2021 23:54:29] "GET /3stat/stats/ HTTP/1.0" 200 -
+127.0.0.1 - - [16/Nov/2021 23:54:31] "GET /3stat/signals/ HTTP/1.0" 200 -
+127.0.0.1 - - [16/Nov/2021 23:54:33] "GET /3stat/signals/ HTTP/1.0" 200 -
+127.0.0.1 - - [16/Nov/2021 23:54:41] "GET /3stat/stats/ HTTP/1.0" 200 -
+127.0.0.1 - - [17/Nov/2021 00:14:22] "GET /3stat/signals/ HTTP/1.0" 200 -
+127.0.0.1 - - [17/Nov/2021 00:14:24] "GET /3stat/signals/ HTTP/1.0" 200 -
+127.0.0.1 - - [17/Nov/2021 00:14:31] "GET /3stat/signals/ HTTP/1.0" 200 -
+127.0.0.1 - - [17/Nov/2021 00:14:34] "GET /3stat/signals/ HTTP/1.0" 200 -
+127.0.0.1 - - [17/Nov/2021 00:14:37] "GET /3stat/stats/ HTTP/1.0" 200 -
+127.0.0.1 - - [17/Nov/2021 00:17:01] "GET /3stat/stats/ HTTP/1.0" 200 -
+127.0.0.1 - - [17/Nov/2021 00:17:04] "GET /3stat/stats/ HTTP/1.0" 200 -
+127.0.0.1 - - [17/Nov/2021 05:10:23] "GET /3stat/stats/ HTTP/1.0" 200 -
+127.0.0.1 - - [17/Nov/2021 05:10:38] "GET /3stat/stats/ HTTP/1.0" 200 -
+127.0.0.1 - - [17/Nov/2021 05:10:56] "GET /3stat/stats/ HTTP/1.0" 200 -
+127.0.0.1 - - [17/Nov/2021 05:11:08] "GET /3stat/stats/ HTTP/1.0" 200 -
+127.0.0.1 - - [17/Nov/2021 05:14:30] "GET /3stat/stats/ HTTP/1.0" 200 -
+127.0.0.1 - - [18/Nov/2021 20:05:45] "POST /api/authentication/login/ HTTP/1.0" 200 -
+127.0.0.1 - - [18/Nov/2021 20:05:48] "GET /3stat/signals/ HTTP/1.0" 200 -
+ * Detected change in '/root/3stat/flask_back_end/app.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 740-269-980
+127.0.0.1 - - [18/Nov/2021 20:39:58] "POST /api/authentication/login/ HTTP/1.0" 200 -
+127.0.0.1 - - [19/Nov/2021 04:23:05] "GET /3stat/signals HTTP/1.0" 308 -
+127.0.0.1 - - [19/Nov/2021 04:23:05] "GET /3stat/signals/ HTTP/1.0" 401 -
+127.0.0.1 - - [19/Nov/2021 04:23:06] "GET /3stat/signals HTTP/1.0" 308 -
+127.0.0.1 - - [19/Nov/2021 04:23:06] "GET /3stat/signals/ HTTP/1.0" 401 -
+127.0.0.1 - - [19/Nov/2021 04:24:21] "POST /api/authentication/login/ HTTP/1.0" 500 -
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.6/dist-packages/mongoengine/queryset/base.py", line 266, in get
+    result = next(queryset)
+  File "/usr/local/lib/python3.6/dist-packages/mongoengine/queryset/base.py", line 1572, in __next__
+    raw_doc = next(self._cursor)
+  File "/usr/local/lib/python3.6/dist-packages/pymongo/cursor.py", line 1246, in next
+    raise StopIteration
+StopIteration
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 2091, in __call__
+    return self.wsgi_app(environ, start_response)
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 2076, in wsgi_app
+    response = self.handle_exception(e)
+  File "/usr/local/lib/python3.6/dist-packages/flask_restful/__init__.py", line 271, in error_router
+    return original_handler(e)
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 2073, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 1518, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/usr/local/lib/python3.6/dist-packages/flask_restful/__init__.py", line 271, in error_router
+    return original_handler(e)
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/usr/local/lib/python3.6/dist-packages/flask_restful/__init__.py", line 467, in wrapper
+    resp = resource(*args, **kwargs)
+  File "/usr/local/lib/python3.6/dist-packages/flask/views.py", line 84, in view
+    return current_app.ensure_sync(self.dispatch_request)(*args, **kwargs)
+  File "/usr/local/lib/python3.6/dist-packages/flask_restful/__init__.py", line 582, in dispatch_request
+    resp = meth(*args, **kwargs)
+  File "/root/3stat/flask_back_end/api/auth.py", line 72, in post
+    user = Users.objects.get(email=data.get('email'))
+  File "/usr/local/lib/python3.6/dist-packages/mongoengine/queryset/base.py", line 269, in get
+    raise queryset._document.DoesNotExist(msg)
+models.users.DoesNotExist: Users matching query does not exist.
+127.0.0.1 - - [19/Nov/2021 04:24:29] "POST /api/authentication/login/ HTTP/1.0" 500 -
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.6/dist-packages/mongoengine/queryset/base.py", line 266, in get
+    result = next(queryset)
+  File "/usr/local/lib/python3.6/dist-packages/mongoengine/queryset/base.py", line 1572, in __next__
+    raw_doc = next(self._cursor)
+  File "/usr/local/lib/python3.6/dist-packages/pymongo/cursor.py", line 1246, in next
+    raise StopIteration
+StopIteration
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 2091, in __call__
+    return self.wsgi_app(environ, start_response)
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 2076, in wsgi_app
+    response = self.handle_exception(e)
+  File "/usr/local/lib/python3.6/dist-packages/flask_restful/__init__.py", line 271, in error_router
+    return original_handler(e)
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 2073, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 1518, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/usr/local/lib/python3.6/dist-packages/flask_restful/__init__.py", line 271, in error_router
+    return original_handler(e)
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/usr/local/lib/python3.6/dist-packages/flask_restful/__init__.py", line 467, in wrapper
+    resp = resource(*args, **kwargs)
+  File "/usr/local/lib/python3.6/dist-packages/flask/views.py", line 84, in view
+    return current_app.ensure_sync(self.dispatch_request)(*args, **kwargs)
+  File "/usr/local/lib/python3.6/dist-packages/flask_restful/__init__.py", line 582, in dispatch_request
+    resp = meth(*args, **kwargs)
+  File "/root/3stat/flask_back_end/api/auth.py", line 72, in post
+    user = Users.objects.get(email=data.get('email'))
+  File "/usr/local/lib/python3.6/dist-packages/mongoengine/queryset/base.py", line 269, in get
+    raise queryset._document.DoesNotExist(msg)
+models.users.DoesNotExist: Users matching query does not exist.
+127.0.0.1 - - [19/Nov/2021 04:25:05] "GET /3stat/stats/ HTTP/1.0" 200 -
+127.0.0.1 - - [19/Nov/2021 05:04:05] "GET /3stat/signals/ HTTP/1.0" 401 -
+127.0.0.1 - - [19/Nov/2021 05:07:08] "GET /3stat/signals/ HTTP/1.0" 401 -
+127.0.0.1 - - [19/Nov/2021 05:24:29] "GET /3stat/stats/ HTTP/1.0" 200 -
+127.0.0.1 - - [19/Nov/2021 05:24:34] "GET /3stat/signals/ HTTP/1.0" 401 -
+127.0.0.1 - - [19/Nov/2021 05:32:54] "GET /3stat/stats/ HTTP/1.0" 200 -
+127.0.0.1 - - [19/Nov/2021 05:32:56] "GET /3stat/stats/ HTTP/1.0" 200 -
+127.0.0.1 - - [19/Nov/2021 15:47:38] "POST /api/authentication/login/ HTTP/1.0" 200 -
+127.0.0.1 - - [19/Nov/2021 15:47:44] "GET /3stat/signals/ HTTP/1.0" 200 -
+127.0.0.1 - - [19/Nov/2021 22:42:11] "GET /3stat/stats/ HTTP/1.0" 200 -
+127.0.0.1 - - [19/Nov/2021 22:42:17] "GET /3stat/signals/ HTTP/1.0" 401 -
+127.0.0.1 - - [19/Nov/2021 22:43:00] "POST /api/authentication/register/ HTTP/1.0" 500 -
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 2091, in __call__
+    return self.wsgi_app(environ, start_response)
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 2076, in wsgi_app
+    response = self.handle_exception(e)
+  File "/usr/local/lib/python3.6/dist-packages/flask_restful/__init__.py", line 271, in error_router
+    return original_handler(e)
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 2073, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 1518, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/usr/local/lib/python3.6/dist-packages/flask_restful/__init__.py", line 271, in error_router
+    return original_handler(e)
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/usr/local/lib/python3.6/dist-packages/flask_restful/__init__.py", line 467, in wrapper
+    resp = resource(*args, **kwargs)
+  File "/usr/local/lib/python3.6/dist-packages/flask/views.py", line 84, in view
+    return current_app.ensure_sync(self.dispatch_request)(*args, **kwargs)
+  File "/usr/local/lib/python3.6/dist-packages/flask_restful/__init__.py", line 582, in dispatch_request
+    resp = meth(*args, **kwargs)
+  File "/root/3stat/flask_back_end/api/auth.py", line 39, in post
+    post_user.save()
+  File "/root/3stat/flask_back_end/models/users.py", line 70, in save
+    self.generate_pw_hash()
+  File "/root/3stat/flask_back_end/models/users.py", line 56, in generate_pw_hash
+    self.password = generate_password_hash(password=self.password).decode('utf-8')
+  File "/usr/local/lib/python3.6/dist-packages/flask_bcrypt.py", line 49, in generate_password_hash
+    return Bcrypt().generate_password_hash(password, rounds)
+  File "/usr/local/lib/python3.6/dist-packages/flask_bcrypt.py", line 151, in generate_password_hash
+    raise ValueError('Password must be non-empty.')
+ValueError: Password must be non-empty.
+127.0.0.1 - - [19/Nov/2021 22:50:09] "POST /api/authentication/register/ HTTP/1.0" 500 -
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 2091, in __call__
+    return self.wsgi_app(environ, start_response)
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 2076, in wsgi_app
+    response = self.handle_exception(e)
+  File "/usr/local/lib/python3.6/dist-packages/flask_restful/__init__.py", line 271, in error_router
+    return original_handler(e)
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 2073, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 1518, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/usr/local/lib/python3.6/dist-packages/flask_restful/__init__.py", line 271, in error_router
+    return original_handler(e)
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/usr/local/lib/python3.6/dist-packages/flask_restful/__init__.py", line 467, in wrapper
+    resp = resource(*args, **kwargs)
+  File "/usr/local/lib/python3.6/dist-packages/flask/views.py", line 84, in view
+    return current_app.ensure_sync(self.dispatch_request)(*args, **kwargs)
+  File "/usr/local/lib/python3.6/dist-packages/flask_restful/__init__.py", line 582, in dispatch_request
+    resp = meth(*args, **kwargs)
+  File "/root/3stat/flask_back_end/api/auth.py", line 39, in post
+    post_user.save()
+  File "/root/3stat/flask_back_end/models/users.py", line 70, in save
+    self.generate_pw_hash()
+  File "/root/3stat/flask_back_end/models/users.py", line 56, in generate_pw_hash
+    self.password = generate_password_hash(password=self.password).decode('utf-8')
+  File "/usr/local/lib/python3.6/dist-packages/flask_bcrypt.py", line 49, in generate_password_hash
+    return Bcrypt().generate_password_hash(password, rounds)
+  File "/usr/local/lib/python3.6/dist-packages/flask_bcrypt.py", line 151, in generate_password_hash
+    raise ValueError('Password must be non-empty.')
+ValueError: Password must be non-empty.
+127.0.0.1 - - [19/Nov/2021 22:50:12] "POST /api/authentication/login/ HTTP/1.0" 500 -
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.6/dist-packages/mongoengine/queryset/base.py", line 266, in get
+    result = next(queryset)
+  File "/usr/local/lib/python3.6/dist-packages/mongoengine/queryset/base.py", line 1572, in __next__
+    raw_doc = next(self._cursor)
+  File "/usr/local/lib/python3.6/dist-packages/pymongo/cursor.py", line 1246, in next
+    raise StopIteration
+StopIteration
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 2091, in __call__
+    return self.wsgi_app(environ, start_response)
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 2076, in wsgi_app
+    response = self.handle_exception(e)
+  File "/usr/local/lib/python3.6/dist-packages/flask_restful/__init__.py", line 271, in error_router
+    return original_handler(e)
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 2073, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 1518, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/usr/local/lib/python3.6/dist-packages/flask_restful/__init__.py", line 271, in error_router
+    return original_handler(e)
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/usr/local/lib/python3.6/dist-packages/flask_restful/__init__.py", line 467, in wrapper
+    resp = resource(*args, **kwargs)
+  File "/usr/local/lib/python3.6/dist-packages/flask/views.py", line 84, in view
+    return current_app.ensure_sync(self.dispatch_request)(*args, **kwargs)
+  File "/usr/local/lib/python3.6/dist-packages/flask_restful/__init__.py", line 582, in dispatch_request
+    resp = meth(*args, **kwargs)
+  File "/root/3stat/flask_back_end/api/auth.py", line 72, in post
+    user = Users.objects.get(email=data.get('email'))
+  File "/usr/local/lib/python3.6/dist-packages/mongoengine/queryset/base.py", line 269, in get
+    raise queryset._document.DoesNotExist(msg)
+models.users.DoesNotExist: Users matching query does not exist.
+127.0.0.1 - - [19/Nov/2021 22:55:04] "GET /3stat/stats/ HTTP/1.0" 200 -
+127.0.0.1 - - [19/Nov/2021 22:55:20] "POST /api/authentication/register/ HTTP/1.0" 500 -
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 2091, in __call__
+    return self.wsgi_app(environ, start_response)
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 2076, in wsgi_app
+    response = self.handle_exception(e)
+  File "/usr/local/lib/python3.6/dist-packages/flask_restful/__init__.py", line 271, in error_router
+    return original_handler(e)
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 2073, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 1518, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/usr/local/lib/python3.6/dist-packages/flask_restful/__init__.py", line 271, in error_router
+    return original_handler(e)
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/usr/local/lib/python3.6/dist-packages/flask_restful/__init__.py", line 467, in wrapper
+    resp = resource(*args, **kwargs)
+  File "/usr/local/lib/python3.6/dist-packages/flask/views.py", line 84, in view
+    return current_app.ensure_sync(self.dispatch_request)(*args, **kwargs)
+  File "/usr/local/lib/python3.6/dist-packages/flask_restful/__init__.py", line 582, in dispatch_request
+    resp = meth(*args, **kwargs)
+  File "/root/3stat/flask_back_end/api/auth.py", line 39, in post
+    post_user.save()
+  File "/root/3stat/flask_back_end/models/users.py", line 70, in save
+    self.generate_pw_hash()
+  File "/root/3stat/flask_back_end/models/users.py", line 56, in generate_pw_hash
+    self.password = generate_password_hash(password=self.password).decode('utf-8')
+  File "/usr/local/lib/python3.6/dist-packages/flask_bcrypt.py", line 49, in generate_password_hash
+    return Bcrypt().generate_password_hash(password, rounds)
+  File "/usr/local/lib/python3.6/dist-packages/flask_bcrypt.py", line 151, in generate_password_hash
+    raise ValueError('Password must be non-empty.')
+ValueError: Password must be non-empty.
+127.0.0.1 - - [19/Nov/2021 22:55:41] "POST /api/authentication/login/ HTTP/1.0" 500 -
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.6/dist-packages/mongoengine/queryset/base.py", line 266, in get
+    result = next(queryset)
+  File "/usr/local/lib/python3.6/dist-packages/mongoengine/queryset/base.py", line 1572, in __next__
+    raw_doc = next(self._cursor)
+  File "/usr/local/lib/python3.6/dist-packages/pymongo/cursor.py", line 1246, in next
+    raise StopIteration
+StopIteration
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 2091, in __call__
+    return self.wsgi_app(environ, start_response)
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 2076, in wsgi_app
+    response = self.handle_exception(e)
+  File "/usr/local/lib/python3.6/dist-packages/flask_restful/__init__.py", line 271, in error_router
+    return original_handler(e)
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 2073, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 1518, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/usr/local/lib/python3.6/dist-packages/flask_restful/__init__.py", line 271, in error_router
+    return original_handler(e)
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/usr/local/lib/python3.6/dist-packages/flask_restful/__init__.py", line 467, in wrapper
+    resp = resource(*args, **kwargs)
+  File "/usr/local/lib/python3.6/dist-packages/flask/views.py", line 84, in view
+    return current_app.ensure_sync(self.dispatch_request)(*args, **kwargs)
+  File "/usr/local/lib/python3.6/dist-packages/flask_restful/__init__.py", line 582, in dispatch_request
+    resp = meth(*args, **kwargs)
+  File "/root/3stat/flask_back_end/api/auth.py", line 72, in post
+    user = Users.objects.get(email=data.get('email'))
+  File "/usr/local/lib/python3.6/dist-packages/mongoengine/queryset/base.py", line 269, in get
+    raise queryset._document.DoesNotExist(msg)
+models.users.DoesNotExist: Users matching query does not exist.
+127.0.0.1 - - [19/Nov/2021 22:57:35] "GET /3stat/signals/ HTTP/1.0" 401 -
+127.0.0.1 - - [19/Nov/2021 22:59:41] "GET /3stat/stats/ HTTP/1.0" 200 -
+127.0.0.1 - - [19/Nov/2021 22:59:45] "POST /api/authentication/login/ HTTP/1.0" 200 -
+127.0.0.1 - - [19/Nov/2021 22:59:48] "GET /3stat/signals/ HTTP/1.0" 200 -
+127.0.0.1 - - [20/Nov/2021 18:22:09] "GET /3stat/signals/ HTTP/1.0" 200 -
+127.0.0.1 - - [21/Nov/2021 02:32:47] "POST /api/authentication/login/ HTTP/1.0" 200 -
+127.0.0.1 - - [21/Nov/2021 02:32:49] "GET /3stat/signals/ HTTP/1.0" 200 -
+127.0.0.1 - - [21/Nov/2021 04:46:38] "GET /3stat/stats/ HTTP/1.0" 200 -
+127.0.0.1 - - [21/Nov/2021 04:47:14] "GET /3stat/stats/ HTTP/1.0" 200 -
+127.0.0.1 - - [21/Nov/2021 04:48:20] "GET /3stat/stats/ HTTP/1.0" 200 -
+127.0.0.1 - - [21/Nov/2021 05:10:26] "GET /3stat/stats/ HTTP/1.0" 200 -
+127.0.0.1 - - [21/Nov/2021 17:43:48] "GET /3stat/signals/ HTTP/1.0" 200 -
+127.0.0.1 - - [21/Nov/2021 18:31:44] "GET /3stat/stats/ HTTP/1.0" 200 -
+127.0.0.1 - - [21/Nov/2021 22:52:14] "GET /3stat/signals/ HTTP/1.0" 200 -
+127.0.0.1 - - [21/Nov/2021 23:01:54] "GET /3stat/stats/ HTTP/1.0" 200 -
+127.0.0.1 - - [22/Nov/2021 00:43:04] "GET /3stat/stats/ HTTP/1.0" 200 -
+127.0.0.1 - - [22/Nov/2021 04:46:27] "GET /3stat/stats/ HTTP/1.0" 200 -
+127.0.0.1 - - [22/Nov/2021 05:20:02] "GET /3stat/stats/ HTTP/1.0" 200 -
+127.0.0.1 - - [22/Nov/2021 19:43:20] "GET /3stat/stats/ HTTP/1.0" 200 -
+127.0.0.1 - - [23/Nov/2021 04:17:47] "GET /3stat/stats/ HTTP/1.0" 200 -
+127.0.0.1 - - [23/Nov/2021 04:27:11] "GET /3stat/stats/ HTTP/1.0" 200 -
+127.0.0.1 - - [23/Nov/2021 04:28:00] "POST /api/authentication/register/ HTTP/1.0" 200 -
+127.0.0.1 - - [23/Nov/2021 04:28:15] "GET /3stat/signals/ HTTP/1.0" 200 -
+127.0.0.1 - - [23/Nov/2021 04:28:30] "GET /3stat/signals/ HTTP/1.0" 200 -
+127.0.0.1 - - [23/Nov/2021 23:07:26] "POST /api/authentication/register/ HTTP/1.0" 500 -
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 2091, in __call__
+    return self.wsgi_app(environ, start_response)
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 2076, in wsgi_app
+    response = self.handle_exception(e)
+  File "/usr/local/lib/python3.6/dist-packages/flask_restful/__init__.py", line 271, in error_router
+    return original_handler(e)
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 2073, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 1518, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/usr/local/lib/python3.6/dist-packages/flask_restful/__init__.py", line 271, in error_router
+    return original_handler(e)
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/usr/local/lib/python3.6/dist-packages/flask_restful/__init__.py", line 467, in wrapper
+    resp = resource(*args, **kwargs)
+  File "/usr/local/lib/python3.6/dist-packages/flask/views.py", line 84, in view
+    return current_app.ensure_sync(self.dispatch_request)(*args, **kwargs)
+  File "/usr/local/lib/python3.6/dist-packages/flask_restful/__init__.py", line 582, in dispatch_request
+    resp = meth(*args, **kwargs)
+  File "/root/3stat/flask_back_end/api/auth.py", line 39, in post
+    post_user.save()
+  File "/root/3stat/flask_back_end/models/users.py", line 71, in save
+    super(Users, self).save(*args, **kwargs)
+  File "/usr/local/lib/python3.6/dist-packages/mongoengine/document.py", line 387, in save
+    self.validate(clean=clean)
+  File "/usr/local/lib/python3.6/dist-packages/mongoengine/base/document.py", line 432, in validate
+    raise ValidationError(message, errors=errors)
+mongoengine.errors.ValidationError: ValidationError (Users:None) (ERROR: `` Is An Invalid Phone Number.: ['phone'])
+127.0.0.1 - - [23/Nov/2021 23:07:28] "POST /api/authentication/register/ HTTP/1.0" 500 -
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 2091, in __call__
+    return self.wsgi_app(environ, start_response)
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 2076, in wsgi_app
+    response = self.handle_exception(e)
+  File "/usr/local/lib/python3.6/dist-packages/flask_restful/__init__.py", line 271, in error_router
+    return original_handler(e)
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 2073, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 1518, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/usr/local/lib/python3.6/dist-packages/flask_restful/__init__.py", line 271, in error_router
+    return original_handler(e)
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/usr/local/lib/python3.6/dist-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/usr/local/lib/python3.6/dist-packages/flask_restful/__init__.py", line 467, in wrapper
+    resp = resource(*args, **kwargs)
+  File "/usr/local/lib/python3.6/dist-packages/flask/views.py", line 84, in view
+    return current_app.ensure_sync(self.dispatch_request)(*args, **kwargs)
+  File "/usr/local/lib/python3.6/dist-packages/flask_restful/__init__.py", line 582, in dispatch_request
+    resp = meth(*args, **kwargs)
+  File "/root/3stat/flask_back_end/api/auth.py", line 39, in post
+    post_user.save()
+  File "/root/3stat/flask_back_end/models/users.py", line 71, in save
+    super(Users, self).save(*args, **kwargs)
+  File "/usr/local/lib/python3.6/dist-packages/mongoengine/document.py", line 387, in save
+    self.validate(clean=clean)
+  File "/usr/local/lib/python3.6/dist-packages/mongoengine/base/document.py", line 432, in validate
+    raise ValidationError(message, errors=errors)
+mongoengine.errors.ValidationError: ValidationError (Users:None) (ERROR: `` Is An Invalid Phone Number.: ['phone'])
+127.0.0.1 - - [23/Nov/2021 23:07:47] "POST /api/authentication/register/ HTTP/1.0" 200 -
+127.0.0.1 - - [24/Nov/2021 19:18:29] "GET /3stat/stats/ HTTP/1.0" 200 -
+127.0.0.1 - - [24/Nov/2021 19:18:32] "POST /api/authentication/login/ HTTP/1.0" 200 -
+127.0.0.1 - - [24/Nov/2021 19:18:34] "GET /3stat/signals/ HTTP/1.0" 200 -
+127.0.0.1 - - [24/Nov/2021 21:18:11] "GET /3stat/signals/ HTTP/1.0" 200 -
+127.0.0.1 - - [24/Nov/2021 22:43:29] "GET /3stat/signals/ HTTP/1.0" 200 -
+127.0.0.1 - - [26/Nov/2021 03:01:21] "GET /3stat/stats/ HTTP/1.0" 200 -
+127.0.0.1 - - [26/Nov/2021 07:49:35] "GET /3stat/stats/ HTTP/1.0" 200 -
+127.0.0.1 - - [26/Nov/2021 22:04:45] "GET /3stat/stats/ HTTP/1.0" 200 -
+127.0.0.1 - - [26/Nov/2021 22:04:52] "GET /3stat/stats/ HTTP/1.0" 200 -
+127.0.0.1 - - [26/Nov/2021 22:05:30] "GET /3stat/stats/ HTTP/1.0" 200 -
+127.0.0.1 - - [26/Nov/2021 22:05:42] "GET /3stat/stats/ HTTP/1.0" 200 -
+127.0.0.1 - - [26/Nov/2021 22:05:58] "GET /3stat/stats/ HTTP/1.0" 200 -
+ * Detected change in '/root/3stat/flask_back_end/KEYS_AND_CONSTANTS.py', reloading
+ * Restarting with stat
+Traceback (most recent call last):
+  File "/root/3stat/flask_back_end/app.py", line 12, in <module>
+    from KEYS_AND_CONSTANTS import DB_NAME, HOST, PORT, USERNAME, PASSWORD, JWT_KEY
+  File "/root/3stat/flask_back_end/KEYS_AND_CONSTANTS.py", line 8
+    <<<<<<< HEAD
+     ^
+SyntaxError: invalid syntax

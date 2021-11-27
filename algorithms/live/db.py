@@ -120,7 +120,7 @@ class Database(Base):
         one_year = bto.get_today_datetime_object() - relativedelta(years=1)
         one_year = one_year.replace(day=1)
         while one_year < bto.get_today_datetime_object():
-            print(one_year)
+            # print(one_year)
             all_points = self.get_db()["backtest_data_3stat_v1.0"].find({"date": bto.make_pretty_date(one_year)})
             for point in all_points:
                 self.get_db()["backtest_data_3stat_v1.0"].delete_one(point)
@@ -166,3 +166,10 @@ class Database(Base):
 
         return emails
 
+
+    def drop_signals(self):
+        """
+        Drops signals collection
+        """
+        self.get_db()["signals"].remove()
+        self.get_db()["focus"].remove()

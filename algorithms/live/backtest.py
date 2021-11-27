@@ -145,7 +145,7 @@ class Backtest(Base):
             stat["benchmark_ror"] = self.add_benchmarks(period),
             stat["drawdown"] = round(stats[period]["dd"] * 100, 2)
             d.Database().update_stats_collection(stat)
-        print(stats)
+        # print(stats)
 
     def add_benchmarks(self, period):
         """
@@ -157,7 +157,6 @@ class Backtest(Base):
         for ticker in bm.get_benchmarks():
             data = {}
             data["benchmark"] = ticker
-            print("PERIOD IN ADD_B: ", period)
             if d.Database().get_benchmark_ticker(ticker, self.get_months(period, True)) is None:
                 data["ror"] = 1
             else:
@@ -394,6 +393,7 @@ class Backtest(Base):
             if self.get_weights()[weight]["max_weight"] != 0:
                 if not data[weight]["invested"]:
                     d_key = (str(weight) + "day_sma_close")
+                    # print(datapoint)
                     if datapoint["closing_price"] > float(datapoint[d_key]['SMA']):
                         data[weight]["new_signal"] = True
                         data[weight]["signal"] = "BUY"
@@ -521,7 +521,7 @@ class Backtest(Base):
         # Fill Backtest Dictionary
         for offset in range(0, 13):
             # If we have surpassed today
-            print("NEW OFFSET: ", offset, " BACKTEST DATE: ", backtest_date, " TODAY: ", today)
+            # print("NEW OFFSET: ", offset, " BACKTEST DATE: ", backtest_date, " TODAY: ", today)
             if backtest_date > today:
                 return
 
@@ -540,7 +540,6 @@ class Backtest(Base):
                 if self.first_of_month(backtest_date) and first:
                     first = False
                     backfill_data[universe[offset]["universe"]][offset] = self.pull_backfill_data(universe[offset])
-                    print(backfill_data[universe[offset]["universe"]][offset])
                     # Add Data Point if Changing Universe
                     if backfill_focus is not None:
                         backfill_data[universe[offset-1]["universe"]][offset] = self.pull_backfill_data(universe[offset-1],
@@ -549,7 +548,7 @@ class Backtest(Base):
                                                  backfill_data[universe[offset-1]["universe"]], backtest_date,
                                                  offset, True)
                     # print(backfill_data[universe[offset]["universe"]][offset])
-                    print("OFFSET: ", offset, " || DATE: ", backtest_date)
+                    # print("OFFSET: ", offset, " || DATE: ", backtest_date)
                     self.backfill_data_point(universe[offset]["universe"], backfill_data[universe[offset]["universe"]],
                                              backtest_date, offset, True, True)
 

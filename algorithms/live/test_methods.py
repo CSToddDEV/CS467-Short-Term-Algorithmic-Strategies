@@ -150,17 +150,21 @@ def reset_portfolio():
     """
     Resets Portfolio
     """
+    d.Database().drop_signals()
     p.Portfolio().reset_portfolio()
 
 def backtest_algo():
     """
     Backtesting algo
     """
-    p.Portfolio().reset_portfolio()
-    today = datetime.datetime.now().replace(minute=0)
+    reset_portfolio()
+    today = datetime.datetime.now().replace(hour=12, minute=0, second=0)
     backtest_date = today - relativedelta(days=30)
+    print("BACKTEST DATE: ", backtest_date)
+    g.Algorithm(force_universe=True, today=backtest_date.strftime("%Y-%m-%d %H:%M:%S")).run()
+    backtest_date = backtest_date + relativedelta(days=1)
     while backtest_date < today:
-        g.Algorithm(today=backtest_date.strftime("%A %d, %B %Y %I:%M%p")).run()
+        g.Algorithm(today=backtest_date.strftime("%Y-%m-%d %H:%M:%S")).run()
         backtest_date = backtest_date + relativedelta(days=1)
 
 
@@ -170,7 +174,7 @@ def backtest_algo():
 # test_backtest()
 # prune_db()
 # prune_first()
-algo_run()
+# algo_run()
 # reset_db()
 # test_volatility_indicator()
 # test_hourly()
@@ -181,3 +185,4 @@ algo_run()
 # reset_portfolio()
 # backtest_algo()
 # test_email_list()
+# backtest_algo()

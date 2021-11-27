@@ -171,11 +171,12 @@ class Algorithm(Base):
         The 3STAT algorithm main function.
         :return:
         """
-        print("TOP: ", self.get_current_portfolio(), " FOCUS: ", self.get_universe().get_focus())
+        print("TOP OF RUN PORTFOLIO: ", self.get_current_portfolio())
         # Reset Portfolio if Universe Change
         if self.get_universe().get_new_focus_truth():
             self.get_portfolio().reset_portfolio()
             self._current_portfolio = self.get_portfolio().get_portfolio()
+            print("UNIVERSE CHANGE: ", self.get_current_portfolio())
 
         # Get Daily Data
         data = a.Data(self.get_equity()).hourly_data()
@@ -207,7 +208,7 @@ class Algorithm(Base):
             print("LOOP: ", self.get_current_portfolio(), " SIGNAL: ", self._signal)
 
         self.get_portfolio().update_portfolio(updated_weight_data)
-        print("BOTTOM: ", self.get_current_portfolio(), " SIGNAL: ", self._signal)
+        print("POST SIGNALS UPDATE: ", self.get_current_portfolio())
 
         if self._signal is not None:
             print("IM IN")
