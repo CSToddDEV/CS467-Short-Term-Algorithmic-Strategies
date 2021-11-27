@@ -1,6 +1,7 @@
 # 3STAT Algorithm - universe.py
 # Fall 2021 CS 463
 
+from dateutil.relativedelta import relativedelta
 from base import Base
 import backtest as b
 import datetime
@@ -21,6 +22,8 @@ class Universe(Base):
         self._old_focus = None
         self._force_universe = force_universe
         self._date = datetime.datetime.now().replace(minute=0).strftime(self.get_date_modifier()) if today is True else today
+        print("TODAY: ", today)
+        print("DATE: ", datetime.datetime.now().replace(minute=0).strftime(self.get_date_modifier()) if today is True else today)
         self._focus = self.select_universe()
 
     def select_universe(self):
@@ -32,6 +35,19 @@ class Universe(Base):
         data_set = False
         equity = self.get_current_equity()
 
+        if self._force_universe:
+            new_focus = None
+            while new_focus is None:
+                print(self.make_backtest_pretty_date(self.get_datetime_object_from_backtest_date(self.get_date())))
+                new_focus = d.Database().get_multiple_backtest_data_dates(self.make_backtest_pretty_date(self.get_datetime_object_from_backtest_date(self.get_date())))
+                new_focus = b.Backtest().most_recent_universe(new_focus)
+                if new_focus is None:
+                    self._date = self.make_backtest_pretty_date((self.get_datetime_object_from_backtest_date(self.get_date()) - relativedelta(days=1)))
+            old_equity = {"current_focus": self.get_current_equity()}
+            new_equity = {"$set": {"current_focus": new_focus["ticker"]}}
+            d.Database().update_current_focus(old_equity, new_equity)
+        self._date = self.make_pretty_date(self.get_datetime_object_from_backtest_date(self.get_date()))
+
         # If first of month get new focus
         if (datetime.date.today().day == 1 and self._daily_check) or (equity is None) or self._force_universe:
             self.set_universe_check()
@@ -39,20 +55,22 @@ class Universe(Base):
 
             if equity != self.get_current_equity():
                 # Update Data for old ticker in Database
-                equity_data = a.Data(self.get_current_equity()).hourly_data()
-                b.Backtest().data_point(self.get_old_focus(),
-                                                           equity_data,
-                                                           self.get_datetime_object_from_date(self.get_date()),
-                                                           True)
+                if self.get_current_equity() is not None:
+                    equity_data = a.Data(self.get_current_equity()).hourly_data()
+                    b.Backtest().data_point(self.get_old_focus(),
+                                                            equity_data,
+                                                            self.get_datetime_object_from_date(self.get_date()),
+                                                            True)
 
                 # SELL SIGNAL HERE
-                data = a.Data(self.get_current_equity())
-                data.pull_close()
-                ticker_data = data.get_data()
-                self.update_signals(self.buy_sell_signals("SELL", self.get_current_equity(), 0,
-                                                          ticker_data["daily_open"],
-                                                          ticker_data["daily_close"],
-                                                          datetime.datetime.now().strftime(self.get_date_modifier())))
+                if self.get_current_equity() is not None:
+                    data = a.Data(self.get_current_equity())
+                    data.pull_close()
+                    ticker_data = data.get_data()
+                    self.update_signals(self.buy_sell_signals("SELL", self.get_current_equity(), 0,
+                                                            ticker_data["daily_open"],
+                                                            ticker_data["daily_close"],
+                                                            datetime.datetime.now().strftime(self.get_date_modifier())))
                 self.set_new_focus()
                 self.set_current_equity(equity)
                 equity_data = a.Data(self.get_current_equity()).hourly_data()

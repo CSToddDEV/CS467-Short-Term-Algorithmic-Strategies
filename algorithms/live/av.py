@@ -291,7 +291,7 @@ class Data(Base):
               "&interval=60min&slice=year{1}month{2}&apikey={3}".format(self.get_equity(), year, month, self.get_api_key())
         data = {}
         returned = requests.get(url)
-        print(returned.content)
+        # print(returned.content)
         df = pandas.read_csv(io.BytesIO(returned.content))
         list_data = df.to_dict('records')
         for point in list_data:
@@ -435,7 +435,7 @@ class Data(Base):
 
         # Get 10 Day SMA
         sma = self.pull_10day_moving_avg_close()
-        if date not in sma.keys():
+        if sma is None or date not in sma.keys():
             return 0
         else:
             sma = float(sma[date]["SMA"])

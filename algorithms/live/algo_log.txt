@@ -1,0 +1,48 @@
+Traceback (most recent call last):
+  File "/root/3stat/algorithms/live/test_methods.py", line 83, in <module>
+    algo_run()
+  File "/root/3stat/algorithms/live/test_methods.py", line 67, in algo_run
+    return g.Algorithm().run()
+  File "/root/3stat/algorithms/live/algo.py", line 223, in run
+    bt.backtest()
+  File "/root/3stat/algorithms/live/backtest.py", line 143, in backtest
+    stats[period] = self.add_buy_signals(stats[period], datapoint)
+  File "/root/3stat/algorithms/live/backtest.py", line 411, in add_buy_signals
+    if datapoint["closing_price"] > datapoint[d_key]['SMA']:
+TypeError: 'float' object is not subscriptable
+Traceback (most recent call last):
+  File "/root/3stat/algorithms/live/test_methods.py", line 83, in <module>
+    algo_run()
+  File "/root/3stat/algorithms/live/test_methods.py", line 67, in algo_run
+    return g.Algorithm().run()
+  File "/root/3stat/algorithms/live/algo.py", line 223, in run
+    bt.backtest()
+  File "/root/3stat/algorithms/live/backtest.py", line 143, in backtest
+    stats[period] = self.add_buy_signals(stats[period], datapoint)
+  File "/root/3stat/algorithms/live/backtest.py", line 411, in add_buy_signals
+    if datapoint["closing_price"] > datapoint[d_key]['SMA']:
+TypeError: 'float' object is not subscriptable
+Traceback (most recent call last):
+  File "/root/3stat/algorithms/live/test_methods.py", line 83, in <module>
+    algo_run()
+  File "/root/3stat/algorithms/live/test_methods.py", line 67, in algo_run
+    return g.Algorithm().run()
+  File "/root/3stat/algorithms/live/algo.py", line 223, in run
+    bt.backtest()
+  File "/root/3stat/algorithms/live/backtest.py", line 143, in backtest
+    stats[period] = self.add_buy_signals(stats[period], datapoint)
+  File "/root/3stat/algorithms/live/backtest.py", line 411, in add_buy_signals
+    if datapoint["closing_price"] > datapoint[d_key]['SMA']:
+TypeError: 'float' object is not subscriptable
+Traceback (most recent call last):
+  File "/root/3stat/algorithms/live/test_methods.py", line 83, in <module>
+    algo_run()
+  File "/root/3stat/algorithms/live/test_methods.py", line 67, in algo_run
+    return g.Algorithm().run()
+  File "/root/3stat/algorithms/live/algo.py", line 223, in run
+    bt.backtest()
+  File "/root/3stat/algorithms/live/backtest.py", line 143, in backtest
+    stats[period] = self.add_buy_signals(stats[period], datapoint)
+  File "/root/3stat/algorithms/live/backtest.py", line 411, in add_buy_signals
+    if datapoint["closing_price"] > datapoint[d_key]['SMA']:
+TypeError: 'float' object is not subscriptable
