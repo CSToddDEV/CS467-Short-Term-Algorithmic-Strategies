@@ -20,6 +20,7 @@ class Universe(Base):
         self._universe_check = False
         self._new_focus = False
         self._old_focus = None
+        self._today = today
         self._force_universe = force_universe
         self._date = datetime.datetime.now().replace(minute=0).strftime(self.get_date_modifier()) if today is True else today
         print("TODAY: ", today)
@@ -33,23 +34,29 @@ class Universe(Base):
         """
         # Get current equity
         data_set = False
+        bt_date = None
         equity = self.get_current_equity()
 
         if self._force_universe:
+            if self._today is not True:
+                bt_date = self.make_backtest_pretty_date(self.get_datetime_object_from_backtest_date(self.get_date()))
+                self._force_universe = False
             new_focus = None
             while new_focus is None:
-                print(self.make_backtest_pretty_date(self.get_datetime_object_from_backtest_date(self.get_date())))
                 new_focus = d.Database().get_multiple_backtest_data_dates(self.make_backtest_pretty_date(self.get_datetime_object_from_backtest_date(self.get_date())))
                 new_focus = b.Backtest().most_recent_universe(new_focus)
                 if new_focus is None:
                     self._date = self.make_backtest_pretty_date((self.get_datetime_object_from_backtest_date(self.get_date()) - relativedelta(days=1)))
-            old_equity = {"current_focus": self.get_current_equity()}
-            new_equity = {"$set": {"current_focus": new_focus["ticker"]}}
+            old_equity = self.get_current_equity()
+            new_equity = new_focus["ticker"]
             d.Database().update_current_focus(old_equity, new_equity)
+            equity = self.get_current_equity()
+
         self._date = self.make_pretty_date(self.get_datetime_object_from_backtest_date(self.get_date()))
 
+        print("DATE: ", self.get_datetime_object_from_date(self._date).day, " EQUITY: ", equity, " FORCE: ", self._force_universe)
         # If first of month get new focus
-        if (datetime.date.today().day == 1 and self._daily_check) or (equity is None) or self._force_universe:
+        if (self.get_datetime_object_from_date(self._date).day == 1 and self._daily_check) or (equity is None) or self._force_universe:
             self.set_universe_check()
             equity = self.get_new_focus()
 
@@ -73,7 +80,7 @@ class Universe(Base):
                                                             datetime.datetime.now().strftime(self.get_date_modifier())))
                 self.set_new_focus()
                 self.set_current_equity(equity)
-                equity_data = a.Data(self.get_current_equity()).hourly_data()
+                equity_data = a.Data(self.get_current_equity()).hourly_data(bt_date)
                 b.Backtest().data_point(self.get_current_equity(),
                                                            equity_data,
                                                            self.get_datetime_object_from_date(self.get_date()),
@@ -81,7 +88,7 @@ class Universe(Base):
                 data_set = True
 
         if not data_set:
-            equity_data = a.Data(self.get_current_equity()).hourly_data()
+            equity_data = a.Data(self.get_current_equity()).hourly_data(bt_date)
             b.Backtest().data_point(self.get_current_equity(),
                                                        equity_data,
                                                        self.get_datetime_object_from_date(self.get_date()))
@@ -138,7 +145,7 @@ class Universe(Base):
         # Get all the tickers we are tracking
         universe = self.get_universe()
         new_focus = None
-        today = self.make_api_pretty_date(datetime.date.today())
+        today = self.make_api_pretty_date(self.get_datetime_object_from_date(self._date))
 
         # Cycle through the tickers in the Universe and choose the next one to focus on
         for ticker in universe:
@@ -147,6 +154,7 @@ class Universe(Base):
                              a.Data(ticker).volatility_indicator(today)]
             else:
                 volatility = a.Data(ticker).volatility_indicator(today)
+                print("VOLATILITY: ", volatility, " DATE: ", today)
                 if volatility > new_focus[1]:
                     new_focus = [ticker, volatility]
 

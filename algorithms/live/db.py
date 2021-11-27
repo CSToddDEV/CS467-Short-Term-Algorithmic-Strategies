@@ -43,7 +43,10 @@ class Database(Base):
         """
         Updates the current focus in MongoDB
         """
-        self.get_db()["focus"].update_one(old_equity, new_equity)
+        if self.get_db()["focus"].find_one() is not None:
+            self.get_db()["focus"].update_one({"current_focus": old_equity}, {"$set": {"current_focus": new_equity}})
+        else:
+            self.get_db()["focus"].insert_one({"current_focus": new_equity})
 
     def backtest_data_point(self, data, date):
         """

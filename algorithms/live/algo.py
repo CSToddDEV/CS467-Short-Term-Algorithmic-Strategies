@@ -31,6 +31,7 @@ class Algorithm(Base):
         self._sell = []
         self._signal = None
         self._summary_data = {}
+        self._bt_date = None if today is True else today
 
     # Get Methods
     def get_equity(self):
@@ -179,7 +180,7 @@ class Algorithm(Base):
             print("UNIVERSE CHANGE: ", self.get_current_portfolio())
 
         # Get Daily Data
-        data = a.Data(self.get_equity()).hourly_data()
+        data = a.Data(self.get_equity()).hourly_data(self._bt_date)
         updated_weight_data = copy.deepcopy(self.get_weights())
 
         for resolution in data['sma_close'].keys():

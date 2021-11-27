@@ -54,7 +54,7 @@ class Data(Base):
         self._data[data_key] = value
 
     # AlphaVantage API Calls
-    def pull_moving_avg_close(self):
+    def pull_moving_avg_close(self, date=None):
         """
         This method calls the Alpha Vantage API and pulls the SMA for closing prices based on the weights in the
         selected weight dictionary.  Will set info in self._data.  Will always pull 3day SMA
@@ -69,8 +69,13 @@ class Data(Base):
 
                 # Add to Dictionary eg. {3: 126.0467}
                 if "Technical Analysis: SMA" in data.keys():
-                    most_recent = list(data["Technical Analysis: SMA"])[0]
-                    sma_close[resolution] = float(data["Technical Analysis: SMA"][most_recent]["SMA"])
+                    if date is None:
+                        most_recent = list(data["Technical Analysis: SMA"])[0]
+                        sma_close[resolution] = float(data["Technical Analysis: SMA"][most_recent]["SMA"])
+                    elif date in data["Technical Analysis: SMA"][most_recent].keys:
+                        sma_close[resolution] = float(data["Technical Analysis: SMA"][date]["SMA"])
+                    else:
+                        sma_close[resolution] = 999999
                 else:
                     sma_close[resolution] = 999999
 
@@ -129,6 +134,7 @@ class Data(Base):
         url = self.build_url("SMA", self.get_equity(), "daily", "10", "close")
         returned = requests.get(url)
         data = returned.json()
+        # print("10 DAY SMA: ", data)
 
         # Add to Dictionary eg. {3: 126.0467}
         if "Technical Analysis: SMA" in data.keys():
@@ -156,7 +162,7 @@ class Data(Base):
         else:
             return 999999
 
-    def pull_moving_avg_low(self):
+    def pull_moving_avg_low(self, date=None):
         """
         This method calls the Alpha Vantage API and pulls the SMA for low prices based on the weights in the
         selected weight dictionary.  Will set info in self._data.
@@ -171,8 +177,13 @@ class Data(Base):
 
                 # Add to Dictionary eg. {3: 126.0467}
                 if "Technical Analysis: SMA" in data.keys():
-                    most_recent = list(data["Technical Analysis: SMA"])[0]
-                    sma_low[resolution] = float(data["Technical Analysis: SMA"][most_recent]["SMA"])
+                    if date is None:
+                        most_recent = list(data["Technical Analysis: SMA"])[0]
+                        sma_low[resolution] = float(data["Technical Analysis: SMA"][most_recent]["SMA"])
+                    elif date in data["Technical Analysis: SMA"].keys():
+                        sma_low[resolution] = float(data["Technical Analysis: SMA"][date]["SMA"])
+                    else:
+                        sma_low[resolution] = 0
                 else:
                     sma_low[resolution] = 0
 
@@ -214,7 +225,7 @@ class Data(Base):
         url = self.build_url("BBANDS", self.get_equity(), "daily", "14", "close")
         returned = requests.get(url)
         data = returned.json()
-        print(data)
+        # print(data)
 
         # Add to Dictionary eg. {3: 126.0467}
         if "Technical Analysis: BBANDS" in data.keys():
@@ -264,22 +275,29 @@ class Data(Base):
             self.set_data("daily_close", 0)
             self.set_data("daily_open", 0)
 
-    def pull_hourly(self):
+    def pull_hourly(self, date=None):
         """
         This method calls the Alpha Vantage API and pulls the closing price for the current day.  Sell set in self._data
         """
         # Get Data
+        time.sleep(15)
         url = "https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol={0}" \
-              "&interval=60min&apikey={1}".format(self.get_equity(), self.get_api_key())
+              "&interval=60min&outputsize=full&apikey={1}".format(self.get_equity(), self.get_api_key())
+        # print(url)
         returned = requests.get(url)
         data = returned.json()
-        print(data)
+        print("PULL HOURLY DATE:", date, " FORMAT: ", data)
 
         # Add to Dictionary eg. {3: 126.0467}
         if "Time Series (60min)" in data.keys():
-            most_recent = list(data["Time Series (60min)"])[0]
+            if date is None:
+                most_recent = list(data["Time Series (60min)"])[0]
+                self.set_data("hourly", float(data["Time Series (60min)"][most_recent]["4. close"]))
+            elif date in data["Time Series (60min)"].keys():
+                self.set_data("hourly", float(data["Time Series (60min)"][date]["4. close"]))
+            else:
+                self.set_data("hourly", 0)
 
-            self.set_data("hourly", float(data["Time Series (60min)"][most_recent]["4. close"]))
         else:
             self.set_data("hourly", 0)
 
@@ -293,7 +311,7 @@ class Data(Base):
               "&interval=60min&slice=year{1}month{2}&apikey={3}".format(self.get_equity(), year, month, self.get_api_key())
         data = {}
         returned = requests.get(url)
-        print(returned.content)
+        # print(returned.content)
         df = pandas.read_csv(io.BytesIO(returned.content))
         list_data = df.to_dict('records')
         for point in list_data:
@@ -364,14 +382,14 @@ class Data(Base):
         self.pull_moving_avg_low()
         return self.get_data()
 
-    def hourly_data(self):
+    def hourly_data(self, date=None):
         """
         Returns a dictionary of hourly data
         :return: daily_data
         """
-        self.pull_hourly()
-        self.pull_moving_avg_close()
-        self.pull_moving_avg_low()
+        self.pull_hourly(date)
+        self.pull_moving_avg_close(date)
+        self.pull_moving_avg_low(date)
         return self.get_data()
 
     def backfill_data(self, month, year):
@@ -424,6 +442,7 @@ class Data(Base):
         If backtest is true, this method will pull the full output size, else it will pull the compact output size
         """
         # Get data based on backtest variable
+        time.sleep(15)
         if backtest:
             url = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={0}" \
                   "&outputsize=full&apikey={1}".format(self.get_equity(), self.get_api_key())
@@ -434,6 +453,8 @@ class Data(Base):
                   "&compact=full&apikey={1}".format(self.get_equity(), self.get_api_key())
             returned = requests.get(url)
             data = returned.json()
+
+        # print("VOLAITLITY DATA: ", data)
 
         # Get 10 Day SMA
         sma = self.pull_10day_moving_avg_close()
