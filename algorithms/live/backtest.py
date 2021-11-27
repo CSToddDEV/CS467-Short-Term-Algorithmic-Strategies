@@ -79,7 +79,7 @@ class Backtest(Base):
         Driver method for getting the stats object for historical comparison of data
         """
         stats = self.build_stats()
-        backtest_date = self.calculate_start_date(12)
+        backtest_date = self.calculate_start_date(11)
         today = self.get_datetime_object_from_backtest_date(self.get_today()) - relativedelta(days=1)
 
         while self.get_datetime_object_from_backtest_date(backtest_date) < today:
@@ -595,10 +595,10 @@ class Backtest(Base):
         data_point = {
             "ticker": focus,
             "closing_price": data[offset]["hourly"][hourly_date]["close"],
-            "3day_sma_close": {"SMA": data[offset]["sma_close"][3][dp_date]},
-            "3day_sma_low": {"SMA": data[offset]["sma_low"][3][dp_date]},
-            "5day_sma_close": {"SMA": data[offset]["sma_close"][5][dp_date]},
-            "5day_sma_low": {"SMA": data[offset]["sma_low"][5][dp_date]},
+            "3day_sma_close": data[offset]["sma_close"][3][dp_date],
+            "3day_sma_low": data[offset]["sma_low"][3][dp_date],
+            "5day_sma_close": data[offset]["sma_close"][5][dp_date],
+            "5day_sma_low": data[offset]["sma_low"][5][dp_date],
             "date": self.make_backtest_pretty_date(og_date),
             "trading_day": trading_day
         }

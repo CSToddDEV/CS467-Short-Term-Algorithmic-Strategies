@@ -435,7 +435,7 @@ class Data(Base):
 
         # Get 10 Day SMA
         sma = self.pull_10day_moving_avg_close()
-        if date not in sma.keys():
+        if not sma or date not in sma.keys():
             return 0
         else:
             sma = float(sma[date]["SMA"])

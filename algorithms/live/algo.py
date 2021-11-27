@@ -6,6 +6,7 @@ import portfolio as p
 import backtest as t
 import universe as u
 from base import Base
+import email_3stat as e
 import datetime
 import db as d
 import av as a
@@ -170,6 +171,7 @@ class Algorithm(Base):
         The 3STAT algorithm main function.
         :return:
         """
+        print("TOP: ", self.get_current_portfolio(), " FOCUS: ", self.get_universe().get_focus())
         # Reset Portfolio if Universe Change
         if self.get_universe().get_new_focus_truth():
             self.get_portfolio().reset_portfolio()
@@ -202,13 +204,17 @@ class Algorithm(Base):
                     self.set_sell(resolution)
                     self.set_invested(False, resolution)
                     self._signal = "SELL"
+            print("LOOP: ", self.get_current_portfolio(), " SIGNAL: ", self._signal)
 
         self.get_portfolio().update_portfolio(updated_weight_data)
+        print("BOTTOM: ", self.get_current_portfolio(), " SIGNAL: ", self._signal)
 
         if self._signal is not None:
-            self.update_signals(self.buy_sell_signals(self.get_signal(), self.get_equity(), self.get_total_invested(),
-                                                      data['hourly'],
-                                                      datetime.datetime.now().strftime(self.get_date_modifier())))
+            print("IM IN")
+            signals = self.buy_sell_signals(self.get_signal(), self.get_equity(), self.get_total_invested(),
+                                            data['hourly'], datetime.datetime.now().strftime(self.get_date_modifier()))
+            e.EmailClient(signals).send_email()
+            self.update_signals(signals)
 
         # Get and Update Backtest Stats and Benchmarks
         n.Benchmark().benchmark_daily()
@@ -245,6 +251,7 @@ class Algorithm(Base):
         """
         Updates the buy/sell signals in the database
         """
+
         d.Database().add_signals(signals)
 
 

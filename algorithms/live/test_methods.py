@@ -9,6 +9,7 @@ import universe as u
 import weights as w
 import algo as g
 import datetime
+import email_3stat as e
 import db as d
 import av as a
 import json
@@ -71,7 +72,11 @@ def algo_run():
     """
     Algo Run
     """
-    return g.Algorithm().run()
+    # d.Database().drop_focus()
+    p.Portfolio().reset_portfolio()
+    algo = g.Algorithm(force_universe=True)
+    print(algo.run())
+    return
 
 
 def reset_db():
@@ -158,13 +163,14 @@ def backtest_algo():
         g.Algorithm(today=backtest_date.strftime("%A %d, %B %Y %I:%M%p")).run()
         backtest_date = backtest_date + relativedelta(days=1)
 
+
 # api_test()
 # backfill_db()
 # test_benchmark()
 # test_backtest()
 # prune_db()
 # prune_first()
-# algo_run()
+algo_run()
 # reset_db()
 # test_volatility_indicator()
 # test_hourly()
@@ -174,3 +180,4 @@ def backtest_algo():
 # test_add_db()
 # reset_portfolio()
 # backtest_algo()
+# test_email_list()

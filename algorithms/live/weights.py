@@ -2,13 +2,13 @@
 # Fall 2021 CS 463
 
 weight_1 = {
-    3: {"weight": 0, "max_weight": 0},
-    5: {"weight": 0, "max_weight": 95},
-    10: {"weight": 0, "max_weight": 0},
-    20: {"weight": 0, "max_weight": 0},
-    30: {"weight": 0, "max_weight": 0},
-    62: {"weight": 0, "max_weight": 0},
-    125: {"weight": 0, "max_weight": 0},
+    3: {"weight": 0, "max_weight": 20},
+    5: {"weight": 0, "max_weight": 15},
+    10: {"weight": 0, "max_weight": 10},
+    20: {"weight": 0, "max_weight": 10},
+    30: {"weight": 0, "max_weight": 10},
+    62: {"weight": 0, "max_weight": 10},
+    125: {"weight": 0, "max_weight": 10},
     250: {"weight": 0, "max_weight": 0}
 }
 

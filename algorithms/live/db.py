@@ -35,6 +35,8 @@ class Database(Base):
         """
         Updates the current focus in MongoDB
         """
+        if self.get_db()["focus"].find_one() is None:
+            return None
         return self.get_db()["focus"].find_one()["current_focus"]
 
     def update_current_focus(self, old_equity, new_equity):
@@ -91,8 +93,11 @@ class Database(Base):
         """
         # Prune Signals
         signals = self.get_db()["signals"].find({})
-        while len(list(signals)) > 10:
-            self.get_db()["signals"].delete_one({list(signals)[0]})
+        signal_list = list(signals)
+        while len(signal_list) > 10:
+            print(signal_list)
+            self.get_db()["signals"].delete_one(dict(signal_list[0]))
+            signal_list = signal_list[1:]
 
         # Prune Backtest Data
         data = self.get_db()["backtest_data_3stat_v1.0"].find()
@@ -139,6 +144,25 @@ class Database(Base):
 
     def drop_benchmarks(self):
         """
-        Dropd Benchmark Collection
+        Drop Benchmark Collection
         """
         self.get_db()["benchmarks"].remove()
+
+    def drop_focus(self):
+        """
+        Drop Benchmark Collection
+        """
+        self.get_db()["focus"].remove()
+
+    def get_subscribers(self):
+        """
+        Get Subscribers Emails and return them as a list
+        """
+        users = self.get_db()["users"].find()
+        emails = []
+
+        for user in users:
+            emails.append(user["email"])
+
+        return emails
+
