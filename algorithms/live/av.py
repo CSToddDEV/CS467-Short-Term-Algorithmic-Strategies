@@ -214,6 +214,7 @@ class Data(Base):
         url = self.build_url("BBANDS", self.get_equity(), "daily", "14", "close")
         returned = requests.get(url)
         data = returned.json()
+        print(data)
 
         # Add to Dictionary eg. {3: 126.0467}
         if "Technical Analysis: BBANDS" in data.keys():
@@ -272,6 +273,7 @@ class Data(Base):
               "&interval=60min&apikey={1}".format(self.get_equity(), self.get_api_key())
         returned = requests.get(url)
         data = returned.json()
+        print(data)
 
         # Add to Dictionary eg. {3: 126.0467}
         if "Time Series (60min)" in data.keys():

@@ -171,7 +171,7 @@ class Algorithm(Base):
         The 3STAT algorithm main function.
         :return:
         """
-        print("TOP OF RUN PORTFOLIO: ", self.get_current_portfolio())
+        print("TOP OF RUN PORTFOLIO: ", self.get_current_portfolio(), " UNIVERSE: ", self.get_equity())
         # Reset Portfolio if Universe Change
         if self.get_universe().get_new_focus_truth():
             self.get_portfolio().reset_portfolio()
@@ -184,6 +184,7 @@ class Algorithm(Base):
 
         for resolution in data['sma_close'].keys():
             # Check to see if we invest
+            print("BUY SIGNALS: HOURLY --> ", data['hourly'], " || SMA --> ",  data["sma_close"][resolution], " || RESOLUTION: ", resolution)
             if data['hourly'] > data['sma_close'][resolution]:
                 if self.get_current_portfolio()[resolution]["invested"] or \
                         updated_weight_data[resolution]["max_weight"] == 0:
@@ -196,6 +197,7 @@ class Algorithm(Base):
                     self._signal = "BUY"
 
             # Check to see if we sell
+
             elif data['hourly'] < data['sma_low'][resolution]:
                 if not self.get_current_portfolio()[resolution]["invested"] or \
                         updated_weight_data[resolution]["max_weight"] == 0:
@@ -205,7 +207,8 @@ class Algorithm(Base):
                     self.set_sell(resolution)
                     self.set_invested(False, resolution)
                     self._signal = "SELL"
-            print("LOOP: ", self.get_current_portfolio(), " SIGNAL: ", self._signal)
+            print("SELL SIGNALS: HOURLY --> ", data['hourly'], " || SMA --> ", data["sma_low"][resolution], " || RESOLUTION: ", resolution)
+            print("LOOP: ", updated_weight_data, " SIGNAL: ", self._signal)
 
         self.get_portfolio().update_portfolio(updated_weight_data)
         print("POST SIGNALS UPDATE: ", self.get_current_portfolio())

@@ -164,6 +164,7 @@ def backtest_algo():
     g.Algorithm(force_universe=True, today=backtest_date.strftime("%Y-%m-%d %H:%M:%S")).run()
     backtest_date = backtest_date + relativedelta(days=1)
     while backtest_date < today:
+        print("BACKTEST DATE: ", backtest_date)
         g.Algorithm(today=backtest_date.strftime("%Y-%m-%d %H:%M:%S")).run()
         backtest_date = backtest_date + relativedelta(days=1)
 
@@ -185,4 +186,4 @@ def backtest_algo():
 # reset_portfolio()
 # backtest_algo()
 # test_email_list()
-# backtest_algo()
+backtest_algo()

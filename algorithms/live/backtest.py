@@ -79,7 +79,7 @@ class Backtest(Base):
         Driver method for getting the stats object for historical comparison of data
         """
         stats = self.build_stats()
-        backtest_date = self.calculate_start_date(11)
+        backtest_date = self.calculate_start_date(1)
         today = self.get_datetime_object_from_backtest_date(self.get_today()) - relativedelta(days=1)
 
         while self.get_datetime_object_from_backtest_date(backtest_date) < today:
@@ -157,7 +157,9 @@ class Backtest(Base):
         for ticker in bm.get_benchmarks():
             data = {}
             data["benchmark"] = ticker
-            if d.Database().get_benchmark_ticker(ticker, self.get_months(period, True)) is None:
+            if d.Database().get_benchmark_ticker(ticker, self.get_months(period, True)) is None or d.Database().get_benchmark_ticker(ticker,
+                                                   self.make_api_pretty_date(self.get_today_datetime_object()
+                                                   - relativedelta(days=1))) is None:
                 data["ror"] = 1
             else:
                 initial_price = float(d.Database().get_benchmark_ticker(ticker, self.get_months(period, True))[ticker]["closing_price"])
