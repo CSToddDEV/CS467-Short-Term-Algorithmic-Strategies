@@ -50,7 +50,6 @@ class Users(Document):
     email = EmailField(required=True, unique=True)
     access = EmbeddedDocumentField(Access, default=Access(user=True, admin=False))
     tickers_tracked = ListField(ReferenceField(Ticker))
-    phone = PhoneField()
 
     def generate_pw_hash(self):
         self.password = generate_password_hash(password=self.password).decode('utf-8')

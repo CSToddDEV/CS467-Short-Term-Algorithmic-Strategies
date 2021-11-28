@@ -69,7 +69,6 @@ class Database(Base):
         """
         Returns the data points for a specific date
         """
-        # print(date)
         return self.get_db()["backtest_data_3stat_v1.0"].find({"date": date})
 
     def update_stats_collection(self, data):
@@ -98,7 +97,6 @@ class Database(Base):
         signals = self.get_db()["signals"].find({})
         signal_list = list(signals)
         while len(signal_list) > 10:
-            print(signal_list)
             self.get_db()["signals"].delete_one(dict(signal_list[0]))
             signal_list = signal_list[1:]
 

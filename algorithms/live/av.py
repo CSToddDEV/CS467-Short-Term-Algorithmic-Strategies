@@ -65,23 +65,31 @@ class Data(Base):
                 # Get Data
                 url = self.build_url("SMA", self.get_equity(), "daily", resolution, "close")
                 returned = requests.get(url)
+                print("STATUS CODE: MA CLOSE: ", returned.status_code)
                 data = returned.json()
+                # print("DATA IN MA CLOSE :", data)
+
+                new_d = self.make_api_pretty_date(self.get_datetime_object_from_backtest_date(date))
+
+                # print("PULL MA CLOSE DATE PERIOD ", resolution, " :", self.make_api_pretty_date(
+                #     self.get_datetime_object_from_backtest_date(date)))
 
                 # Add to Dictionary eg. {3: 126.0467}
                 if "Technical Analysis: SMA" in data.keys():
                     if date is None:
-                        most_recent = list(data["Technical Analysis: SMA"])[0]
+                        most_recent = list(data["Technical Analysis: SMA"])[1]
                         sma_close[resolution] = float(data["Technical Analysis: SMA"][most_recent]["SMA"])
-                    elif date in data["Technical Analysis: SMA"][most_recent].keys:
-                        sma_close[resolution] = float(data["Technical Analysis: SMA"][date]["SMA"])
+                    elif new_d in data["Technical Analysis: SMA"].keys():
+                        sma_close[resolution] = float(data["Technical Analysis: SMA"][new_d]["SMA"])
                     else:
                         sma_close[resolution] = 999999
                 else:
                     sma_close[resolution] = 999999
 
-                time.sleep(15)
+                # time.sleep(15)
 
         self.set_data("sma_close", sma_close)
+        # print(self.get_data())
 
     def pull_moving_avg_close_backfill(self):
         """
@@ -103,7 +111,7 @@ class Data(Base):
                 else:
                     sma_close[resolution] = 999999
 
-                time.sleep(15)
+                # time.sleep(15)
 
         self.set_data("sma_close", sma_close)
 
@@ -120,7 +128,7 @@ class Data(Base):
         # Add to Dictionary eg. {3: 126.0467}
         if "Technical Analysis: SMA" in data.keys():
             most_recent = list(data["Technical Analysis: SMA"])[0]
-            time.sleep(15)
+            # time.sleep(15)
             return float(data["Technical Analysis: SMA"][most_recent]["SMA"])
         else:
             return 999999
@@ -138,7 +146,7 @@ class Data(Base):
 
         # Add to Dictionary eg. {3: 126.0467}
         if "Technical Analysis: SMA" in data.keys():
-            time.sleep(15)
+            # time.sleep(15)
             return data["Technical Analysis: SMA"]
         else:
             return None
@@ -149,7 +157,7 @@ class Data(Base):
         selected weight dictionary.  Will set info in self._data.  Will always pull 3day SMA
         """
         # Get Data
-        time.sleep(15)
+        # time.sleep(15)
         url = self.build_url("SMA", self.get_equity(), "daily", "3", "close")
         returned = requests.get(url)
         data = returned.json()
@@ -173,23 +181,30 @@ class Data(Base):
                 # Get Data
                 url = self.build_url("SMA", self.get_equity(), "daily", resolution, "low")
                 returned = requests.get(url)
+                print("STATUS CODE: MA LOW: ", returned.status_code)
                 data = returned.json()
+                # print("DATA IN SMAL LOW :", data)
+
+                new_d = self.make_api_pretty_date(self.get_datetime_object_from_backtest_date(date))
+
+                # print("PULL MA LOW:", self.make_api_pretty_date(self.get_datetime_object_from_backtest_date(date)))
 
                 # Add to Dictionary eg. {3: 126.0467}
                 if "Technical Analysis: SMA" in data.keys():
                     if date is None:
-                        most_recent = list(data["Technical Analysis: SMA"])[0]
+                        most_recent = list(data["Technical Analysis: SMA"])[1]
                         sma_low[resolution] = float(data["Technical Analysis: SMA"][most_recent]["SMA"])
-                    elif date in data["Technical Analysis: SMA"].keys():
-                        sma_low[resolution] = float(data["Technical Analysis: SMA"][date]["SMA"])
+                    elif new_d in data["Technical Analysis: SMA"].keys():
+                        sma_low[resolution] = float(data["Technical Analysis: SMA"][new_d]["SMA"])
                     else:
                         sma_low[resolution] = 0
                 else:
                     sma_low[resolution] = 0
 
-                time.sleep(15)
+                # time.sleep(15)
 
         self.set_data("sma_low", sma_low)
+        # print(self.get_data())
 
     def pull_moving_avg_low_backfill(self):
         """
@@ -211,7 +226,7 @@ class Data(Base):
                 else:
                     sma_low[resolution] = 0
 
-                time.sleep(15)
+                # time.sleep(15)
 
         self.set_data("sma_low", sma_low)
 
@@ -221,7 +236,7 @@ class Data(Base):
         Will set info in self._data.
         """
         # Get Data
-        time.sleep(15)
+        # time.sleep(15)
         url = self.build_url("BBANDS", self.get_equity(), "daily", "14", "close")
         returned = requests.get(url)
         data = returned.json()
@@ -240,7 +255,7 @@ class Data(Base):
         Will set info in self._data.
         """
         # Get Data
-        time.sleep(15)
+        # time.sleep(15)
         url = self.build_url("BBANDS", self.get_equity(), "daily", "14", "close")
         returned = requests.get(url)
         data = returned.json()
@@ -280,13 +295,12 @@ class Data(Base):
         This method calls the Alpha Vantage API and pulls the closing price for the current day.  Sell set in self._data
         """
         # Get Data
-        time.sleep(15)
-        url = "https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol={0}" \
-              "&interval=60min&outputsize=full&apikey={1}".format(self.get_equity(), self.get_api_key())
+        # time.sleep(15)
+        url = "https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol={0}&interval=60min&outputsize=full&apikey={1}".format(self.get_equity(), self.get_api_key())
         # print(url)
         returned = requests.get(url)
         data = returned.json()
-        print("PULL HOURLY DATE:", date, " FORMAT: ", data)
+        # print("PULL HOURLY DATE:", date, " FORMAT: ", data)
 
         # Add to Dictionary eg. {3: 126.0467}
         if "Time Series (60min)" in data.keys():
@@ -300,13 +314,14 @@ class Data(Base):
 
         else:
             self.set_data("hourly", 0)
+        # print(self.get_data())
 
     def pull_backfill_hourly(self, month, year):
         """
         This method calls the Alpha Vantage API and pulls the closing price for the current day.  Sell set in self._data
         """
         # Get Data
-        time.sleep(15)
+        # time.sleep(15)
         url = "https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY_EXTENDED&symbol={0}" \
               "&interval=60min&slice=year{1}month{2}&apikey={3}".format(self.get_equity(), year, month, self.get_api_key())
         data = {}
@@ -359,8 +374,7 @@ class Data(Base):
         :param series_type: close, open, high, low
         :return: url
         """
-        return "https://www.alphavantage.co/query?function={0}&symbol={1}&interval={2}&time_period={3}&series_type={4}\
-        &apikey={5}".format(function, ticker, interval, str(period), series_type, self.get_api_key())
+        return "https://www.alphavantage.co/query?function={0}&symbol={1}&interval={2}&time_period={3}&series_type={4}&apikey={5}".format(function, ticker, interval, str(period), series_type, self.get_api_key())
 
     def new_focus(self):
         """
@@ -387,9 +401,22 @@ class Data(Base):
         Returns a dictionary of hourly data
         :return: daily_data
         """
-        self.pull_hourly(date)
-        self.pull_moving_avg_close(date)
-        self.pull_moving_avg_low(date)
+        if date and self.get_datetime_object_from_backtest_date(date).weekday() in range(5, 7):
+
+            h_date = False
+            ma_date = False
+            return None
+        elif date and self.get_datetime_object_from_backtest_date(date).weekday() == 0:
+            h_date = date
+            ma_date = self.make_backtest_pretty_date(
+                self.get_datetime_object_from_backtest_date(date) - relativedelta(days=3))
+        else:
+            h_date = date
+            ma_date = self.make_backtest_pretty_date(
+                self.get_datetime_object_from_backtest_date(date) - relativedelta(days=1))
+        self.pull_hourly(h_date)
+        self.pull_moving_avg_close(ma_date)
+        self.pull_moving_avg_low(ma_date)
         return self.get_data()
 
     def backfill_data(self, month, year):
@@ -442,7 +469,7 @@ class Data(Base):
         If backtest is true, this method will pull the full output size, else it will pull the compact output size
         """
         # Get data based on backtest variable
-        time.sleep(15)
+        # time.sleep(15)
         if backtest:
             url = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={0}" \
                   "&outputsize=full&apikey={1}".format(self.get_equity(), self.get_api_key())
@@ -487,7 +514,7 @@ class Data(Base):
         If backtest is true, this method will pull the full output size, else it will pull the compact output size
         """
         # Get data based on backtest variable
-        time.sleep(15)
+        # time.sleep(15)
         url = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={0}" \
               "&outputsize=full&apikey={1}".format(self.get_equity(), self.get_api_key())
         returned = requests.get(url)

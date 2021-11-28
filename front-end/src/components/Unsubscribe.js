@@ -1,4 +1,6 @@
 import React from 'react';
+import {authFetch} from "./App";
+import {Redirect} from "react-router-dom";
 
 function Unsubscribe() {
     return (
@@ -15,9 +17,9 @@ function Unsubscribe() {
       super(props);
       this.state = {
         email: '',
-        phone: ''
+        deleted: false,
       }
-  
+
       this.handleChange = this.handleChange.bind(this);
       this.handleSubmit = this.handleSubmit.bind(this);
     }
@@ -28,22 +30,36 @@ function Unsubscribe() {
       this.setState({[name]: event.target.value});
     }
   
-    handleSubmit(event) {
-      alert('Email submitted: ' + this.state.email + ' / Phone # submitted: ' + this.state.phone);
+    handleSubmit(event, props) {
       event.preventDefault();
+      authFetch('/api/authentication/register/', {
+          method: 'delete',
+          headers: {
+              'Content-Type': 'application/json'
+          }
+        }).then( res => res.json()
+        ).then( data => {
+            this.setState({
+                deleted: data
+            })
+      }).catch( (error) => {
+                console.log(error);
+                this.setState({
+                serverError: true,
+                isLoading: false
+        });
+      });
     }
   
     render() {
+     if (this.state.deleted) {
+         return <Redirect to='/3stat/signup/' />;
+      }
       return (
         <form onSubmit={this.handleSubmit}>
           <label>
             Email:
             <input name="email" type="text" value={this.state.email} onChange={this.handleChange} />
-          </label>
-          <br></br>
-          <label>
-            Phone #:
-            <input name="phone" type="text" value={this.state.phone} onChange={this.handleChange} />
           </label>
           <br></br>
           <input type="submit" value="Submit" />

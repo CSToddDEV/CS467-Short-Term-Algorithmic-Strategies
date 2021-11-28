@@ -64,7 +64,9 @@ class Portfolio(Base):
 
         # Update Database
         for resolution in new_weights.keys():
-            if column.find({"resolution": resolution}).count() == 0:
+            if resolution == "weight":
+                continue
+            elif column.find({"resolution": resolution}).count() == 0:
                 column.insert({"resolution": resolution, "weight": new_weights[resolution]["weight"],
                                "max_weight": new_weights[resolution]["max_weight"]})
             else:

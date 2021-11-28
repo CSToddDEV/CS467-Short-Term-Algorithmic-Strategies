@@ -41,7 +41,6 @@ function SignUp(props) {
       event.preventDefault();
       let account = {
           'email' : this.state.email,
-          'phone' : this.state.phone,
           'password' : this.state.password
       }
       if (event.nativeEvent.submitter.value === "Sign Up"){
@@ -104,11 +103,6 @@ function SignUp(props) {
             <label>
               Email:
               <input name="email" type="text" value={this.state.email} onChange={this.handleChange} />
-            </label>
-            <br></br>
-            <label>
-              Phone #:
-              <input name="phone" type="text" value={this.state.phone} onChange={this.handleChange} />
             </label>
             <br></br>
             <label>

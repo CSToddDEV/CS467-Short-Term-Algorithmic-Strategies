@@ -79,7 +79,7 @@ class Backtest(Base):
         Driver method for getting the stats object for historical comparison of data
         """
         stats = self.build_stats()
-        backtest_date = self.calculate_start_date(1)
+        backtest_date = self.calculate_start_date(12)
         today = self.get_datetime_object_from_backtest_date(self.get_today()) - relativedelta(days=1)
 
         while self.get_datetime_object_from_backtest_date(backtest_date) < today:
@@ -284,12 +284,12 @@ class Backtest(Base):
         if len(datapoint) == 0:
             return point
 
-        if len(datapoint) > 1:
-            for dp in datapoint:
-                if "new_signal" in dp.keys() and dp["new_signal"] is True:
-                    point = dp
-        elif len(datapoint) == 1 or point is None:
-            point = datapoint[0]
+        for dp in datapoint:
+            if "new_signal" in dp.keys() and dp["new_signal"] is True:
+                point = dp
+                return point
+            else:
+                point = datapoint[0]
 
         return point
 
@@ -683,4 +683,5 @@ class Backtest(Base):
 
         else:
             # Add To DB
+            # print("DATA POINT", data_point)
             d.Database().backtest_data_point(data_point, data_point["date"])

@@ -62,7 +62,6 @@ class EmailClient:
         """
         Sends signal emails
         """
-        print("IN EMAIL")
         port = self._port
         context = ssl.create_default_context()
         info = self.get_info()
@@ -71,6 +70,7 @@ class EmailClient:
         with smtplib.SMTP_SSL("smtp.gmail.com", port, context=context) as server:
             server.login(self.get_login(), self.get_password())
             server.sendmail(self.get_sender(), ([self.get_sender()] + (self.get_subscriber_emails())), message)
+            print("EMAIL: ---> SENT")
 
     def compose_email(self, info):
         """
@@ -122,8 +122,6 @@ class EmailClient:
 
 </html>
         """.format("green" if info["signal"] == "BUY" else "red", info["signal"], info["ticker"], info["total_invested"], info["closing"], info["date"])
-
-        print(html)
 
         plain_text = MIMEText(text, "plain")
         html_text = MIMEText(html, "html")

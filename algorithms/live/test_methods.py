@@ -14,6 +14,7 @@ import db as d
 import av as a
 import json
 import copy
+import time
 
 
 def backfill_db():
@@ -72,9 +73,7 @@ def algo_run():
     """
     Algo Run
     """
-    # d.Database().drop_focus()
-    p.Portfolio().reset_portfolio()
-    algo = g.Algorithm(force_universe=True)
+    algo = g.Algorithm()
     print(algo.run())
     return
 
@@ -158,19 +157,18 @@ def backtest_algo():
     Backtesting algo
     """
     reset_portfolio()
-    today = datetime.datetime.now().replace(hour=12, minute=0, second=0)
-    backtest_date = today - relativedelta(days=30)
-    print("BACKTEST DATE: ", backtest_date)
-    g.Algorithm(force_universe=True, today=backtest_date.strftime("%Y-%m-%d %H:%M:%S")).run()
-    backtest_date = backtest_date + relativedelta(days=1)
+    today = datetime.datetime.now() - relativedelta(hours=1)
+    backtest_date = today.replace(hour=12, minute=0, second=0) - relativedelta(days=30)
     while backtest_date < today:
+        time.sleep(1)
         print("BACKTEST DATE: ", backtest_date)
-        g.Algorithm(today=backtest_date.strftime("%Y-%m-%d %H:%M:%S")).run()
-        backtest_date = backtest_date + relativedelta(days=1)
+        g.Algorithm(force_universe=True, today=backtest_date.strftime("%Y-%m-%d %H:%M:%S")).run()
+        backtest_date = backtest_date + relativedelta(hours=1)
+    g.Algorithm().run()
 
 
 # api_test()
-# backfill_db()
+backfill_db()
 # test_benchmark()
 # test_backtest()
 # prune_db()
@@ -186,4 +184,4 @@ def backtest_algo():
 # reset_portfolio()
 # backtest_algo()
 # test_email_list()
-backtest_algo()
+# backtest_algo()

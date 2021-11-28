@@ -167,73 +167,98 @@ class Algorithm(Base):
         self.get_current_portfolio()[resolution]["invested"] = truth
 
     # Execution Methods
+    def translate_portfolio(self, portfolio):
+        """
+        Translates the portfolio to a portfolio object
+        """
+        translation = {}
+        for resolution in portfolio.keys():
+            translation[resolution] = {
+                'weight': portfolio[resolution]["max_weight"] if portfolio[resolution]["invested"] else 0,
+                'max_weight': portfolio[resolution]["max_weight"],
+                'invested': portfolio[resolution]["invested"]
+            }
+        return translation
+
     def run(self):
         """
         The 3STAT algorithm main function.
         :return:
         """
-        print("TOP OF RUN PORTFOLIO: ", self.get_current_portfolio(), " UNIVERSE: ", self.get_equity())
+        # print("TOP OF RUN PORTFOLIO: ", self.get_current_portfolio(), " UNIVERSE: ", self.get_equity())
         # Reset Portfolio if Universe Change
+        if self.get_equity() is None:
+            print("HOUR OFF!")
+            return
+
         if self.get_universe().get_new_focus_truth():
             self.get_portfolio().reset_portfolio()
             self._current_portfolio = self.get_portfolio().get_portfolio()
             print("UNIVERSE CHANGE: ", self.get_current_portfolio())
 
         # Get Daily Data
-        data = a.Data(self.get_equity()).hourly_data(self._bt_date)
-        updated_weight_data = copy.deepcopy(self.get_weights())
+        # data = a.Data(self.get_equity()).hourly_data(self._bt_date)
+        data = d.Database().get_multiple_backtest_data_dates(self.make_backtest_pretty_date(self.get_datetime_object_from_date(self.get_universe().get_date())))
+        data = t.Backtest().most_recent_universe(data)
+        if data["ticker"] is None or data["closing_price"] == 0:
+            print("SKIPPING DATE: ", self.make_backtest_pretty_date(self.get_datetime_object_from_date(self.get_universe().get_date())))
+            return
+        updated_weight_data = self.translate_portfolio(self.get_current_portfolio())
 
-        for resolution in data['sma_close'].keys():
-            # Check to see if we invest
-            print("BUY SIGNALS: HOURLY --> ", data['hourly'], " || SMA --> ",  data["sma_close"][resolution], " || RESOLUTION: ", resolution)
-            if data['hourly'] > data['sma_close'][resolution]:
-                if self.get_current_portfolio()[resolution]["invested"] or \
-                        updated_weight_data[resolution]["max_weight"] == 0:
-                    updated_weight_data[resolution]["weight"] = updated_weight_data[resolution]["max_weight"]
-                    continue
-                else:
-                    updated_weight_data[resolution]["weight"] = updated_weight_data[resolution]["max_weight"]
-                    self.set_buy(resolution)
-                    self.set_invested(True, resolution)
-                    self._signal = "BUY"
+        for resolution in self.get_weights().keys():
+            if self.get_weights()[resolution]["max_weight"] > 0:
+                # Check to see if we invest
+                if data['closing_price'] > data[str(resolution) + "day_sma_close"]['SMA']:
+                    if self.get_current_portfolio()[resolution]["invested"] or \
+                            updated_weight_data[resolution]["max_weight"] == 0:
+                        updated_weight_data[resolution]["weight"] = updated_weight_data[resolution]["max_weight"]
+                        pass
+                    else:
+                        print("BUY SIGNALS: HOURLY --> ", data['closing_price'], " || SMA --> ",
+                              data[str(resolution) + "day_sma_close"]['SMA'], " || RESOLUTION: ", resolution)
+                        updated_weight_data[resolution]["weight"] = updated_weight_data[resolution]["max_weight"]
+                        self.set_buy(resolution)
+                        self.set_invested(True, resolution)
+                        self._signal = "BUY"
 
-            # Check to see if we sell
+                # Check to see if we sell
+                elif data['closing_price'] < data[str(resolution) + "day_sma_low"]['SMA']:
+                    if not self.get_current_portfolio()[resolution]["invested"] or \
+                            updated_weight_data[resolution]["max_weight"] == 0:
+                        pass
+                    else:
+                        print("SELL SIGNALS: HOURLY --> ", data['closing_price'], " || SMA --> ",
+                              data[str(resolution) + "day_sma_low"]['SMA'], " || RESOLUTION: ", resolution)
 
-            elif data['hourly'] < data['sma_low'][resolution]:
-                if not self.get_current_portfolio()[resolution]["invested"] or \
-                        updated_weight_data[resolution]["max_weight"] == 0:
-                    continue
-                else:
-                    updated_weight_data["weight"] = 0
-                    self.set_sell(resolution)
-                    self.set_invested(False, resolution)
-                    self._signal = "SELL"
-            print("SELL SIGNALS: HOURLY --> ", data['hourly'], " || SMA --> ", data["sma_low"][resolution], " || RESOLUTION: ", resolution)
-            print("LOOP: ", updated_weight_data, " SIGNAL: ", self._signal)
+                        updated_weight_data[resolution]["weight"] = 0
+                        self.set_sell(resolution)
+                        self.set_invested(False, resolution)
+                        self._signal = "SELL"
 
         self.get_portfolio().update_portfolio(updated_weight_data)
-        print("POST SIGNALS UPDATE: ", self.get_current_portfolio())
+
+
 
         if self._signal is not None:
-            print("IM IN")
             signals = self.buy_sell_signals(self.get_signal(), self.get_equity(), self.get_total_invested(),
-                                            data['hourly'], datetime.datetime.now().strftime(self.get_date_modifier()))
+                                            data['closing_price'], self.get_universe().get_date())
             e.EmailClient(signals).send_email()
             self.update_signals(signals)
 
         # Get and Update Backtest Stats and Benchmarks
-        n.Benchmark().benchmark_daily()
-        bt = t.Backtest()
-        bt.backtest()
-        d.Database().prune_database()
+        if self._bt_date is None:
+            n.Benchmark().benchmark_daily()
+            bt = t.Backtest()
+            bt.backtest()
+            d.Database().prune_database()
 
-        # Update Reporting Data
-        self.set_summary_data("Backtest Class", **bt.get_update_status())
-        if self.get_universe_check():
-            self.set_summary_data("Universe Class", **self.get_universe().get_summary_data())
-        self.set_summary_data("Algorithm Class", signal=self.get_signal(), focus=self.get_equity(),
-                              previous_focus=self.get_old_focus(), universe_change=self.get_new_focus_truth(),
-                              portfolio=self.get_current_portfolio())
+            # Update Reporting Data
+            self.set_summary_data("Backtest Class", **bt.get_update_status())
+            if self.get_universe_check():
+                self.set_summary_data("Universe Class", **self.get_universe().get_summary_data())
+            self.set_summary_data("Algorithm Class", signal=self.get_signal(), focus=self.get_equity(),
+                                  previous_focus=self.get_old_focus(), universe_change=self.get_new_focus_truth(),
+                                  portfolio=self.get_current_portfolio())
 
         return self.get_summary_data()
 

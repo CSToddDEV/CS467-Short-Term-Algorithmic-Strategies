@@ -22,9 +22,7 @@ class Universe(Base):
         self._old_focus = None
         self._today = today
         self._force_universe = force_universe
-        self._date = datetime.datetime.now().replace(minute=0).strftime(self.get_date_modifier()) if today is True else today
-        print("TODAY: ", today)
-        print("DATE: ", datetime.datetime.now().replace(minute=0).strftime(self.get_date_modifier()) if today is True else today)
+        self._date = datetime.datetime.now().replace(minute=0).strftime(self.get_backtest_date_modifier()) if today is True else today
         self._focus = self.select_universe()
 
     def select_universe(self):
@@ -34,7 +32,7 @@ class Universe(Base):
         """
         # Get current equity
         data_set = False
-        bt_date = None
+        bt_date = self.get_date()
         equity = self.get_current_equity()
 
         if self._force_universe:
@@ -42,11 +40,12 @@ class Universe(Base):
                 bt_date = self.make_backtest_pretty_date(self.get_datetime_object_from_backtest_date(self.get_date()))
                 self._force_universe = False
             new_focus = None
+            focus_date = self.get_date()
             while new_focus is None:
-                new_focus = d.Database().get_multiple_backtest_data_dates(self.make_backtest_pretty_date(self.get_datetime_object_from_backtest_date(self.get_date())))
+                new_focus = d.Database().get_multiple_backtest_data_dates(self.make_backtest_pretty_date(self.get_datetime_object_from_backtest_date(focus_date)))
                 new_focus = b.Backtest().most_recent_universe(new_focus)
                 if new_focus is None:
-                    self._date = self.make_backtest_pretty_date((self.get_datetime_object_from_backtest_date(self.get_date()) - relativedelta(days=1)))
+                    focus_date = self.make_backtest_pretty_date((self.get_datetime_object_from_backtest_date(focus_date) - relativedelta(hours=1)))
             old_equity = self.get_current_equity()
             new_equity = new_focus["ticker"]
             d.Database().update_current_focus(old_equity, new_equity)
@@ -56,17 +55,19 @@ class Universe(Base):
 
         print("DATE: ", self.get_datetime_object_from_date(self._date).day, " EQUITY: ", equity, " FORCE: ", self._force_universe)
         # If first of month get new focus
-        if (self.get_datetime_object_from_date(self._date).day == 1 and self._daily_check) or (equity is None) or self._force_universe:
-            self.set_universe_check()
+        if (self.get_datetime_object_from_date(self._date).day == 1 and self._daily_check) or (equity is None and self._today is True) or self._force_universe:
             equity = self.get_new_focus()
 
             if equity != self.get_current_equity():
+                self.set_universe_check()
                 # Update Data for old ticker in Database
                 if self.get_current_equity() is not None:
-                    equity_data = a.Data(self.get_current_equity()).hourly_data()
+                    equity_data = a.Data(self.get_current_equity()).hourly_data(bt_date)
+                    if equity_data is None:
+                        return None
                     b.Backtest().data_point(self.get_old_focus(),
                                                             equity_data,
-                                                            self.get_datetime_object_from_date(self.get_date()),
+                                                            self.get_datetime_object_from_date(self._date),
                                                             True)
 
                 # SELL SIGNAL HERE
@@ -81,14 +82,18 @@ class Universe(Base):
                 self.set_new_focus()
                 self.set_current_equity(equity)
                 equity_data = a.Data(self.get_current_equity()).hourly_data(bt_date)
+                if equity_data is None:
+                    return None
                 b.Backtest().data_point(self.get_current_equity(),
                                                            equity_data,
-                                                           self.get_datetime_object_from_date(self.get_date()),
+                                                           self.get_datetime_object_from_date(self._date),
                                                            True, True)
                 data_set = True
 
-        if not data_set:
+        if not data_set :
             equity_data = a.Data(self.get_current_equity()).hourly_data(bt_date)
+            if equity_data is None:
+                return None
             b.Backtest().data_point(self.get_current_equity(),
                                                        equity_data,
                                                        self.get_datetime_object_from_date(self.get_date()))
