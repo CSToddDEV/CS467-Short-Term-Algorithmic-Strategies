@@ -194,14 +194,14 @@ class Algorithm(Base):
         if self.get_universe().get_new_focus_truth():
             self.get_portfolio().reset_portfolio()
             self._current_portfolio = self.get_portfolio().get_portfolio()
-            print("UNIVERSE CHANGE: ", self.get_current_portfolio())
+            print("<---------------------UNIVERSE CHANGE----------------------->")
 
         # Get Daily Data
         # data = a.Data(self.get_equity()).hourly_data(self._bt_date)
         data = d.Database().get_multiple_backtest_data_dates(self.make_backtest_pretty_date(self.get_datetime_object_from_date(self.get_universe().get_date())))
         data = t.Backtest().most_recent_universe(data)
         if data["ticker"] is None or data["closing_price"] == 0:
-            print("SKIPPING DATE: ", self.make_backtest_pretty_date(self.get_datetime_object_from_date(self.get_universe().get_date())))
+            # print("SKIPPING DATE: ", self.make_backtest_pretty_date(self.get_datetime_object_from_date(self.get_universe().get_date())))
             return
         updated_weight_data = self.translate_portfolio(self.get_current_portfolio())
 
@@ -242,7 +242,7 @@ class Algorithm(Base):
         if self._signal is not None:
             signals = self.buy_sell_signals(self.get_signal(), self.get_equity(), self.get_total_invested(),
                                             data['closing_price'], self.get_universe().get_date())
-            e.EmailClient(signals).send_email()
+            # e.EmailClient(signals).send_email()
             self.update_signals(signals)
 
         # Get and Update Backtest Stats and Benchmarks

@@ -65,7 +65,7 @@ class Data(Base):
                 # Get Data
                 url = self.build_url("SMA", self.get_equity(), "daily", resolution, "close")
                 returned = requests.get(url)
-                print("STATUS CODE: MA CLOSE: ", returned.status_code)
+                # print("STATUS CODE: MA CLOSE: ", returned.status_code)
                 data = returned.json()
                 # print("DATA IN MA CLOSE :", data)
 
@@ -98,7 +98,7 @@ class Data(Base):
         """
         sma_close = {}
         for resolution in self.get_weights().keys():
-            if resolution == 3 or self.get_weights()[resolution]["max_weight"] > 0:
+            if self.get_weights()[resolution]["max_weight"] > 0:
                 # Get Data
                 url = self.build_url("SMA", self.get_equity(), "daily", resolution, "close")
                 returned = requests.get(url)
@@ -181,7 +181,7 @@ class Data(Base):
                 # Get Data
                 url = self.build_url("SMA", self.get_equity(), "daily", resolution, "low")
                 returned = requests.get(url)
-                print("STATUS CODE: MA LOW: ", returned.status_code)
+                # print("STATUS CODE: MA LOW: ", returned.status_code)
                 data = returned.json()
                 # print("DATA IN SMAL LOW :", data)
 
@@ -274,8 +274,7 @@ class Data(Base):
         This method calls the Alpha Vantage API and pulls the closing price for the current day.  Sell set in self._data
         """
         # Get Data
-        url = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={0}" \
-              "&apikey={1}".format(self.get_equity(), self.get_api_key())
+        url = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={0}&apikey={1}".format(self.get_equity(), self.get_api_key())
         returned = requests.get(url)
         data = returned.json()
 
@@ -321,15 +320,17 @@ class Data(Base):
         This method calls the Alpha Vantage API and pulls the closing price for the current day.  Sell set in self._data
         """
         # Get Data
-        # time.sleep(15)
-        url = "https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY_EXTENDED&symbol={0}" \
-              "&interval=60min&slice=year{1}month{2}&apikey={3}".format(self.get_equity(), year, month, self.get_api_key())
+        url = "https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY_EXTENDED&symbol={0}&interval=60min&slice=year{1}month{2}&apikey={3}".format(self.get_equity(), year, month, self.get_api_key())
+        # print(url)
         data = {}
         returned = requests.get(url)
+        # print(returned.content)
         # print(returned.content)
         df = pandas.read_csv(io.BytesIO(returned.content))
         list_data = df.to_dict('records')
         for point in list_data:
+            if 'close' not in point.keys():
+                print("CLOSE NOT IN KEYS: ", list_data)
             data[point["time"]] = {'close': point["close"]}
 
 
@@ -347,8 +348,7 @@ class Data(Base):
         This method calls the Alpha Vantage API and pulls the closing price for the current day.  Sell set in self._data
         """
         # Get Data
-        url = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={0}" \
-              "&outputsize=full&apikey={1}".format(self.get_equity(), self.get_api_key())
+        url = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={0}&outputsize=full&apikey={1}".format(self.get_equity(), self.get_api_key())
         returned = requests.get(url)
         data = returned.json()
         data.keys()
@@ -401,6 +401,7 @@ class Data(Base):
         Returns a dictionary of hourly data
         :return: daily_data
         """
+        time.sleep(.25)
         if date and self.get_datetime_object_from_backtest_date(date).weekday() in range(5, 7):
 
             h_date = False
@@ -471,13 +472,11 @@ class Data(Base):
         # Get data based on backtest variable
         # time.sleep(15)
         if backtest:
-            url = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={0}" \
-                  "&outputsize=full&apikey={1}".format(self.get_equity(), self.get_api_key())
+            url = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={0}&outputsize=full&apikey={1}".format(self.get_equity(), self.get_api_key())
             returned = requests.get(url)
             data = returned.json()
         else:
-            url = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={0}" \
-                  "&compact=full&apikey={1}".format(self.get_equity(), self.get_api_key())
+            url = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={0}&compact=full&apikey={1}".format(self.get_equity(), self.get_api_key())
             returned = requests.get(url)
             data = returned.json()
 
@@ -515,46 +514,51 @@ class Data(Base):
         """
         # Get data based on backtest variable
         # time.sleep(15)
-        url = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={0}" \
-              "&outputsize=full&apikey={1}".format(self.get_equity(), self.get_api_key())
+        url = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={0}&outputsize=full&apikey={1}".format(self.get_equity(), self.get_api_key())
         returned = requests.get(url)
         data = returned.json()
-        volatility = {}
         sma = self.pull_10day_moving_avg_close()
+
         # print(sma)
 
-        for month_offset in range(0, 13):
             # Get 10 Day SMA
-            if date not in sma.keys():
-                i = 1
-                new_date = date
-                while i != 5 and new_date not in sma.keys():
-                    new_date = self.make_api_pretty_date(self.get_datetime_object_from_api_date(date) -
-                                                         relativedelta(days=i))
-                    if new_date in sma.keys():
-                        monthly_sma = float(sma[new_date]["SMA"])
-                    elif i >= 5:
-                        return 0
-                    i += 1
-            else:
-                monthly_sma = float(sma[date]["SMA"])
+        if date not in sma.keys():
+            i = 1
+            new_date = date
+            while i != 5 and new_date not in sma.keys():
+                new_date = self.make_api_pretty_date(self.get_datetime_object_from_api_date(date) + relativedelta(days=i))
+                if new_date in sma.keys():
+                    monthly_sma = float(sma[new_date]["SMA"])
+                elif i >= 5:
+                    print("OVERSTRECHED TICKER: ", self.get_equity())
+                    # time.sleep(30)
+                    return 0
+                i += 1
+        else:
+            monthly_sma = float(sma[date]["SMA"])
 
             # Calculate Standard Deviation
-            sd = 0
-            i = 0
-            while i < 10:
-                if date not in data["Time Series (Daily)"].keys():
-                    date = self.make_api_pretty_date(self.get_datetime_object_from_api_date(date) - relativedelta(days=1))
+        sd = 0
+        i = 0
+        while i < 10:
+            if date not in data["Time Series (Daily)"].keys():
+                if i == 0:
+                    date = self.make_api_pretty_date(self.get_datetime_object_from_api_date(date) + relativedelta(days=1))
                 else:
-                    sd += (float(data["Time Series (Daily)"][date]["4. close"]) - float(sma[date]["SMA"]))**2
-                    i += 1
                     date = self.make_api_pretty_date(self.get_datetime_object_from_api_date(date) - relativedelta(days=1))
+            else:
+                # print("TICKER: ", self.get_equity(), " DATA: ", data["Time Series (Daily)"][date], " PRE-STD: ", sd)
+                sd += (float(data["Time Series (Daily)"][date]["4. close"]) - float(monthly_sma))**2
+                i += 1
+                # print("TICKER: ", self.get_equity(), " CLOSE: ", data["Time Series (Daily)"][date]["4. close"], " POST-STD: ", sd)
+                date = self.make_api_pretty_date(self.get_datetime_object_from_api_date(date) - relativedelta(days=1))
             # Get square root to get SD
-            sd = math.sqrt(sd)
-
+        sd = sd/10
+        sd = math.sqrt(sd)
             # Calculate and update volatility
-            volatility[month_offset] = sd/monthly_sma
-            date = self.make_api_pretty_date(self.get_datetime_object_from_api_date(date) + relativedelta(months=1))
+        volatility = sd/monthly_sma
+        # print("TICKER: ", self.get_equity(), " STD: ", sd, " SMA: ", monthly_sma, " VOLATILITY: ", volatility)
+        # date = self.make_api_pretty_date(self.get_datetime_object_from_api_date(date) + relativedelta(months=1))
 
         # Return Volatility
         return volatility

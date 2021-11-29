@@ -69,7 +69,7 @@ class Database(Base):
         """
         Returns the data points for a specific date
         """
-        return self.get_db()["backtest_data_3stat_v1.0"].find({"date": date})
+        return self.get_db()["backtest_data_3stat_v1.0"].find({"date": str(date)})
 
     def update_stats_collection(self, data):
         """
@@ -142,6 +142,7 @@ class Database(Base):
         self.get_db()["benchmarks"].remove()
         self.get_db()["signals"].remove()
         self.get_db()["stats"].remove()
+        self.get_db()["focus"].remove()
 
     def drop_benchmarks(self):
         """

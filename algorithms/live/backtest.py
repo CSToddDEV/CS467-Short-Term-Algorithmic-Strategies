@@ -7,6 +7,8 @@ from base import Base
 import datetime
 import db as d
 import av as a
+import time
+import json
 
 
 class Backtest(Base):
@@ -79,11 +81,19 @@ class Backtest(Base):
         Driver method for getting the stats object for historical comparison of data
         """
         stats = self.build_stats()
-        backtest_date = self.calculate_start_date(12)
-        today = self.get_datetime_object_from_backtest_date(self.get_today()) - relativedelta(days=1)
+        backtest_date = self.make_backtest_pretty_date(self.get_datetime_object_from_backtest_date(self.calculate_start_date(12)).replace(hour=14, minute=0, second=0))
+        today = self.get_datetime_object_from_backtest_date(self.get_today()) - relativedelta(hours=1)
 
-        while self.get_datetime_object_from_backtest_date(backtest_date) < today:
+        while self.get_datetime_object_from_backtest_date(backtest_date) <= today:
+            datapoint = d.Database().get_multiple_backtest_data_dates(backtest_date)
+            dp = list(datapoint)
+            if len(dp) == 0:
+                backtest_date = self.make_backtest_pretty_date((self.get_datetime_object_from_backtest_date(backtest_date) + relativedelta(hours=1)))
+                continue
+            dp = dp[0]
             for period in stats.keys():
+                if stats[period]["ticker"] is None:
+                    stats[period]["ticker"] = dp["ticker"]
 
                 # Check to see if portfolio is active
                 stats[period] = self.activate_portfolio(stats[period], backtest_date)
@@ -92,34 +102,34 @@ class Backtest(Base):
                     continue
 
                 # Parse Universe Change if First of Month
-                if self.first_of_month(self.get_datetime_object_from_backtest_date(backtest_date)):
-                    stats[period] = self.parse_universe_change(stats[period], backtest_date)
-                    # print(stats)
+                stats[period] = self.parse_universe_change(stats[period], backtest_date, dp)
 
-                # Ensure It Is a Trading Day
-                if not self.is_trading_day(backtest_date):
-                    continue
+                # Add Buy and Sell Signals
+                # print("DATA POINT :", dp["ticker"], " PRICE: ", dp["closing_price"], " DATE: ", dp["date"])
+                stats[period] = self.add_sell_signals(stats[period], dp)
+                stats[period] = self.add_buy_signals(stats[period], dp)
 
                 # Execute Buy and Sell Signals
                 for weight in self.get_weights().keys():
                     if self.get_weights()[weight]["max_weight"] != 0:
                         if stats[period][weight]["new_signal"]:
-                            stats[period] = self.execute_sell(stats[period], weight, backtest_date)
-                            # print("EXECUTE SELL SIGNALS: ", backtest_date, "\nPORTFOLIO: ", stats)
+                            print("TICKER: ", dp["ticker"], " PERIOD: ", period, " DATE: ", backtest_date, " PORTFOLIO TOTAL: ", stats[period]["portfolio_total"], " CLOSING PRICE: ", dp["closing_price"], " PORTFOLIO CASH: ", stats[period]["portfolio_cash"])
+                            print("PRE-EXECUTE SELL SIGNALS: ", backtest_date, " SHARES: ", stats[period]["shares"], " DATE: ", backtest_date)
+                            stats[period] = self.execute_sell(stats[period], weight, backtest_date, dp)
+                            print("TICKER: ", dp["ticker"], " PERIOD: ", period, " DATE: ", backtest_date, " PORTFOLIO TOTAL: ", stats[period]["portfolio_total"], " CLOSING PRICE: ", dp["closing_price"], " PORTFOLIO CASH: ", stats[period]["portfolio_cash"])
+                            print("EXECUTE SELL SIGNALS: ", backtest_date, " SHARES: ", stats[period]["shares"], " DATE: ", backtest_date)
+                            stats[period] = self.execute_buy(stats[period], weight, backtest_date, dp)
+                            print("TICKER: ", dp["ticker"], " PERIOD: ", period, " DATE: ", backtest_date, " PORTFOLIO TOTAL: ", stats[period]["portfolio_total"], " CLOSING PRICE: ", dp["closing_price"], " PORTFOLIO CASH: ", stats[period]["portfolio_cash"])
+                            print("EXEBUCTE BUY SIGNALS: ", backtest_date, " SHARES: ", stats[period]["shares"], " DATE: ", backtest_date)
+                            print("<--------------------------------------------------------------------------------------------------------------------------------------------->")
+                            print()
+                            print()
                             # time.sleep(5)
-                            stats[period] = self.execute_buy(stats[period], weight, backtest_date)
-                            # print("EXEBUCTE BUY SIGNALS: ", backtest_date, "\nPORTFOLIO: ", stats[period])
-                            # time.sleep(5)
-
-                # Add Buy and Sell Signals
-                datapoint = d.Database().get_multiple_backtest_data_dates(backtest_date)
-                datapoint = self.most_recent_universe(datapoint)
-                stats[period] = self.add_sell_signals(stats[period], datapoint)
-                stats[period] = self.add_buy_signals(stats[period], datapoint)
 
                 # Update Portfolio Total and Increase Day
-                stats[period] = self.total_up_portfolio(stats[period], datapoint)
+                stats[period] = self.total_up_portfolio(stats[period], dp)
                 stats[period] = self.update_dd(stats[period])
+                # print("STATS -->  WEIGHT: [", period, "] SHARES: ", stats[period]["shares"], " PORTFOLIO TOTAL: ", stats[period]["portfolio_total"])
 
             # if self.get_datetime_object_from_date(backtest_date).hour == "21":
             #     backtest_date = self.make_pretty_date((self.get_datetime_object_from_date(backtest_date) +
@@ -130,7 +140,6 @@ class Backtest(Base):
 
         # Update stats
         self.set_update_status(self.create_stats(stats))
-
         return self.get_update_status()
 
     def create_stats(self, stats):
@@ -145,6 +154,7 @@ class Backtest(Base):
             stat["benchmark_ror"] = self.add_benchmarks(period),
             stat["drawdown"] = round(stats[period]["dd"] * 100, 2)
             d.Database().update_stats_collection(stat)
+            print("STAT: ", stat)
         # print(stats)
 
     def add_benchmarks(self, period):
@@ -189,7 +199,7 @@ class Backtest(Base):
         data = self.most_recent_universe(data)
         # print(date)
 
-        if data is None or not data["trading_day"]:
+        if data is None:
             return False
         return True
 
@@ -221,16 +231,14 @@ class Backtest(Base):
         """
         Totals up Portfolio
         """
-        if datapoint is None:
+        if datapoint is None or datapoint["closing_price"] == 0:
             return data
 
         # Total up Portfolio
-        data["portfolio_total"] = ((float(data["shares"]) * float(datapoint["closing_price"])) +
-                                   float(data["portfolio_cash"]))
-
+        data["portfolio_total"] = ((float(data["shares"]) * float(datapoint["closing_price"])) + float(data["portfolio_cash"]))
         return data
 
-    def execute_sell(self, data, weight, date):
+    def execute_sell(self, data, weight, date, dp):
         """
         It there is a sell signal then execute sell
         """
@@ -240,11 +248,8 @@ class Backtest(Base):
 
         # Execute Sell
         else:
-            datapoint = d.Database().get_multiple_backtest_data_dates(date)
-            # Handle Multiple datapoints in case of Universe Selection
-            datapoint = self.most_recent_universe(datapoint)
             data["shares"] -= data[weight]["shares"]
-            data["portfolio_cash"] += round((float(datapoint["closing_price"]) * data[weight]["shares"]), 2)
+            data["portfolio_cash"] += round((float(dp["closing_price"]) * data[weight]["shares"]), 2)
             data[weight]["invested"] = False
             data[weight]["shares"] = 0
             data[weight]["new_signal"] = False
@@ -252,7 +257,7 @@ class Backtest(Base):
 
             return data
 
-    def execute_buy(self, data, weight, date):
+    def execute_buy(self, data, weight, date, dp):
         """
         It there is a buy signal execute it
         """
@@ -261,19 +266,15 @@ class Backtest(Base):
             return data
 
         # Execute Buy
-        else:
-            datapoint = d.Database().get_multiple_backtest_data_dates(date)
-            # Handle Multiple datapoints in case of Universe Selection
-            datapoint = self.most_recent_universe(datapoint)
-            data[weight]["shares"] = round((data["portfolio_total"] * (self.get_weights()[weight]
-                                      ["max_weight"]*.01)) / float(datapoint["closing_price"]), 2)
-            data["shares"] += data[weight]["shares"]
-            data["portfolio_cash"] -= round(data[weight]["shares"] * float(datapoint["closing_price"]), 2)
-            data[weight]["invested"] = True
-            data[weight]["new_signal"] = False
-            data[weight]["signal"] = None
+        dp = float(dp["closing_price"])
+        data[weight]["shares"] = round((data["portfolio_total"] * (self.get_weights()[weight]["max_weight"]*.01)) // dp)
+        data["shares"] += data[weight]["shares"]
+        data["portfolio_cash"] -= round((data[weight]["shares"] * dp), 2)
+        data[weight]["invested"] = True
+        data[weight]["new_signal"] = False
+        data[weight]["signal"] = None
 
-            return data
+        return data
 
     def most_recent_universe(self, datapoint):
         """
@@ -320,6 +321,7 @@ class Backtest(Base):
 
         for period in periods:
             stats[period[0]] = {
+                "ticker": None,
                 "active": False,
                 "start_date": self.calculate_start_date(period[1]),
                 "portfolio_base": self.get_portfolio_base(),
@@ -328,8 +330,7 @@ class Backtest(Base):
                 "shares": 0,
                 "dd_top": 0,
                 "dd_bottom": None,
-                "dd": 0,
-                "benchmarks": []
+                "dd": 0
             }
             for weight in self.get_weights().keys():
                 if self.get_weights()[weight]["max_weight"] != 0:
@@ -342,43 +343,54 @@ class Backtest(Base):
 
         return stats
 
-    def parse_universe_change(self, data, date):
+    def parse_universe_change(self, data, date, dp):
         """
         Handles Universe Change.  If Universe changes, sells old portfolio.
         """
-        new, old = {}, {}
-        signals = d.Database().get_multiple_backtest_data_dates(date)
-        signals = list(signals)
-
-        # Make sure there are enough signals to compare
-        if len(signals) < 2:
+        # Check for Universe Change
+        if dp["ticker"] == data["ticker"]:
             return data
+        
+        # print("OLD TICKER: ", data["ticker"], " || NEW TICKER: ", dp["ticker"])
 
-        # Find old and new signals
-        for signal in signals:
-            if signal["new_universe"]:
-                new = signal
-            else:
-                old = signal
+        # Get Old SIgnal
+        old = None
+        old_date = self.get_datetime_object_from_backtest_date(date) - relativedelta(hours=1)
+        while old is None:
+            old = d.Database().get_multiple_backtest_data_dates(self.make_backtest_pretty_date(old_date))
+            old = list(old)
+            if len(old) == 0:
+                old = None
+                old_date = old_date - relativedelta(hours=1)
+        
+        old = list(old)
+        print("OLD LIST: ", old)
+        old = old[0]
 
-        # Return if there is no universe change
-        if not old or new["ticker"] == old["ticker"]:
-            return data
+        # print("NEW SIGNAL: ", dp, " || OLD SIGNAL: ", old)
 
         # Update data otherwise
+        print("<****************************************************************************>")
+        print("<-------------UNIVERSE CHANGE------------->")
+        print("PRE CHANGE: ")
+        print(json.dumps(data, indent=4))
         for weight in self.get_weights().keys():
-            if self.get_weights()["max_weights"] != 0:
+            if self.get_weights()[weight]["max_weight"] != 0:
                 if data[weight]["invested"]:
-                    data["portfolio_cash"] += round(data[weight]["shares"] * old["opening_price"], 2)
+                    data["portfolio_cash"] += round(data[weight]["shares"] * old["closing_price"], 2)
                     data["shares"] -= data[weight]["shares"]
                     data[weight]["shares"] = 0
                     data[weight]["new_signal"] = False
                     data[weight]["signal"] = None
 
         data["portfolio_total"] = data["portfolio_cash"]
-
+        data["ticker"] = dp["ticker"]
         # Add New Buy Signals
-        data = self.add_buy_signals(data, new)
+        # data = self.add_buy_signals(data, new)
+        print("POST CHANGE: ")
+        print(json.dumps(data, indent=4))
+        print("<****************************************************************************>")
+        print()
 
         return data
 
@@ -392,7 +404,7 @@ class Backtest(Base):
         # print(datapoint)
 
         for weight in self.get_weights().keys():
-            if self.get_weights()[weight]["max_weight"] != 0:
+            if self.get_weights()[weight]["max_weight"] != 0 and datapoint["closing_price"] > 0:
                 if not data[weight]["invested"]:
                     d_key = (str(weight) + "day_sma_close")
                     # print(datapoint)
@@ -412,7 +424,7 @@ class Backtest(Base):
         # print("DATA: ", data)
         # print("DATAPOINT: ", datapoint)
         for weight in self.get_weights().keys():
-            if self.get_weights()[weight]["max_weight"] != 0:
+            if self.get_weights()[weight]["max_weight"] != 0 and datapoint["closing_price"] > 0:
                 if data[weight]["invested"]:
                     if datapoint["closing_price"] < float(datapoint[(str(weight) + "day_sma_low")]['SMA']):
                         data[weight]["new_signal"] = True
@@ -429,8 +441,8 @@ class Backtest(Base):
             return data
 
         if self.get_datetime_object_from_backtest_date(data["start_date"]) <= self.get_datetime_object_from_backtest_date(backtest_date):
-            print("START DATE: ", self.get_datetime_object_from_backtest_date(data["start_date"]), " || BACKTEST DATE: ",
-                  self.get_datetime_object_from_backtest_date(backtest_date))
+            # print("START DATE: ", self.get_datetime_object_from_backtest_date(data["start_date"]), " || BACKTEST DATE: ",
+            #       self.get_datetime_object_from_backtest_date(backtest_date))
             data["active"] = True
             data["portfolio_total"] = data["portfolio_base"]
             data["portfolio_cash"] = data["portfolio_base"]
@@ -459,117 +471,150 @@ class Backtest(Base):
 
         else:
             if period == 12:
-                date = self.make_backtest_pretty_date((today - relativedelta(years=1)).replace(hour=13, minute=0,
+                date = self.make_backtest_pretty_date((today - relativedelta(years=1)).replace(hour=14, minute=0,
                                                                                       second=0, microsecond=0))
 
             elif 1 <= period < 12:
-                date = self.make_backtest_pretty_date((today - relativedelta(months=period)).replace(hour=13, minute=0, second=0,
+                date = self.make_backtest_pretty_date((today - relativedelta(months=period)).replace(hour=14, minute=0, second=0,
                                                                                             microsecond=0))
 
             else:
-                date = self.make_backtest_pretty_date((today - relativedelta(weeks=(period * 10))).replace(hour=13, minute=0,
+                date = self.make_backtest_pretty_date((today - relativedelta(weeks=(period * 10))).replace(hour=14, minute=0,
                                                                                                   second=0, microsecond=0))
 
         # Return Date set to 8AM EST
         return date
 
     # Backfill methods
-    def pull_backfill_data(self, data, backtrack=False):
+    def pull_backfill_data(self, ticker, month, year, backtrack=False):
         """
         Pulls backfill data from API and stores it in backfill_data
         """
-        if backtrack:
-            month = int(data["month"]) + 1
-            if month > 12:
-                month = 1
-        else:
-            month = data["month"]
+        # if backtrack:
+        #     month = int(data["month"]) + 1
+        #     if month > 12:
+        #         month = 1
+        # else:
+        #     month = data["month"]
 
-        return a.Data(data["universe"]).backfill_data(month, data["year"])
+        return a.Data(ticker).backfill_data(month, year)
 
     def backfill(self):
         """
         Driver Function for back filling historical data
         """
         # Get the first day of the month of the current month a year ago
-        print("IN BACKFILL")
+        print("<---BEGINNING BACKFILL--->")
         today = self.get_today_datetime_object()
         backtest_date = today - relativedelta(years=1)
-        backtest_date = backtest_date.replace(day=1, hour=5, minute=0, second=0)
+        backtest_date = backtest_date.replace(day=1, hour=14, minute=0, second=0)
         backfill_focus = None
         backfill_data = {}
 
         # Populate Universe Selection Data
+        print("<-UNIVERSE SELECTION DATA->")
         universe_selection_data = {}
-        for ticker in self.get_universe():
-            universe_selection_data[ticker] = a.Data(ticker).volatility_indicator_backtest(self.make_api_pretty_date(backtest_date))
-            backfill_data[ticker] = {}
+        universe_selection_date = backtest_date
+        for month_offset in range(13, 0, -1):
+            print("UNIVERSE SELECTION OFFSET: ", month_offset)
+            universe_selection_data[month_offset] = {}
+
+            for ticker in self.get_universe():
+                universe_selection_data[month_offset][ticker] = a.Data(ticker).volatility_indicator_backtest(self.make_api_pretty_date(universe_selection_date))
+                # print("RANGE: ", month_offset, "TICKER: ", ticker, " VOLATILITY: ", universe_selection_data[month_offset][ticker])
+            universe_selection_date += relativedelta(months=1)
 
         # Create universe data dictionary:
-        universe = {0: {
+        universe = {13: {
             "year": 2,
             "month": 1,
-            "universe": self.get_universe_backtest(universe_selection_data, 0)
+            "universe": self.get_universe_backtest(universe_selection_data, 13)
         }}
         month = 12
-        for month_offset in range(1, 13):
+        for month_offset in range(13, 0, -1):
             universe[month_offset] = {
                 "year": 1,
                 "month": month,
                 "universe": self.get_universe_backtest(universe_selection_data, month_offset)
             }
             month -= 1
+        print("UNIVERSE DICTIONARY: ", universe)
+        for ticker in self.get_universe():
+            backfill_data[ticker] = {}
+            backfill_data[ticker]["hourly"] = {}
+            backfill_data[ticker]["sma_close"] = {}
+            backfill_data[ticker]["sma_low"] = {}
 
+        print("<-FILL BACKTEST DATA->")
         # Fill Backtest Dictionary
-        for offset in range(0, 13):
+        for offset in range(13, 0, -1):
+            print("FILL BACKTEST OFFSET ", offset)
             # If we have surpassed today
             # print("NEW OFFSET: ", offset, " BACKTEST DATE: ", backtest_date, " TODAY: ", today)
             if backtest_date > today:
                 return
 
-            # Get month out
-            first = True
-            first_day = True
+            if offset == 13:
+                year = 2
+                month = 1
+            else:
+                year = 1
+                month = offset
 
-            while not self.first_of_month(backtest_date) or first or first_day:
-                if backtest_date.day == 2:
-                    first_day = False
-                if backtest_date > today:
+            for ticker in self.get_universe():
+                new_data = self.pull_backfill_data(ticker, month, year)
+                backfill_data[ticker]["hourly"].update(new_data["hourly"])
+                backfill_data[ticker]["sma_low"].update(new_data["sma_low"])
+                backfill_data[ticker]["sma_close"].update(new_data["sma_close"])
+
+            # next_interval = backtest_date + relativedelta(days=30)
+            # # Get month out
+            # first = True
+            # first_day = True
+
+            
+            # while not self.first_of_month(backtest_date) or first or first_day:
+        print("<-DATA POINTS->")
+        offset = 13
+        while backtest_date < (today - relativedelta(days=1)):
+                # if backtest_date.day == 2:
+                #     first_day = False
+            if backtest_date > today:
                     return
 
                 # print("BACKTEST DATE: ", backtest_date)
                 # If First of Month Choose Focus Ticker
-                if self.first_of_month(backtest_date) and first:
-                    first = False
-                    backfill_data[universe[offset]["universe"]][offset] = self.pull_backfill_data(universe[offset])
+                # if self.first_of_month(backtest_date) and first:
+            if self.first_of_month(backtest_date):
+                    # first = False
+                    # backfill_data[universe[offset]["universe"]][offset] = self.pull_backfill_data(universe[offset])
                     # Add Data Point if Changing Universe
-                    if backfill_focus is not None:
-                        backfill_data[universe[offset-1]["universe"]][offset] = self.pull_backfill_data(universe[offset-1],
-                                                                                                        True)
-                        self.backfill_data_point(universe[offset-1]["universe"],
-                                                 backfill_data[universe[offset-1]["universe"]], backtest_date,
-                                                 offset, True)
-                    # print(backfill_data[universe[offset]["universe"]][offset])
-                    # print("OFFSET: ", offset, " || DATE: ", backtest_date)
-                    self.backfill_data_point(universe[offset]["universe"], backfill_data[universe[offset]["universe"]],
-                                             backtest_date, offset, True, True)
+                    # if backfill_focus is not None:
+                    #     backfill_data[universe[offset-1]["universe"]][offset] = self.pull_backfill_data(universe[offset-1],
+                    #True)
+                    # if offset != 13:                                                                                     
+                    #     self.backfill_data_point(universe[offset-1]["universe"], backfill_data[universe[offset+1]["universe"]], backtest_date, offset, True)
+                        # print(backfill_data[universe[offset]["universe"]][offset])
+                        # print("OFFSET: ", offset, " || DATE: ", backtest_date)
+                    self.backfill_data_point(universe[offset]["universe"], backfill_data[universe[offset]["universe"]], backtest_date, offset, True, True)
+                    offset -= 1
 
-                else:
+            else:
                     # Add Backfill Data to DB
-                    self.backfill_data_point(universe[offset]["universe"], backfill_data[universe[offset]["universe"]],
-                                             backtest_date, offset)
+                self.backfill_data_point(universe[offset]["universe"], backfill_data[universe[offset]["universe"]], backtest_date, offset)
 
                 # Increase by a hour
-                backtest_date = backtest_date + datetime.timedelta(hours=1)
+            backtest_date = backtest_date + datetime.timedelta(hours=1)
 
     def get_universe_backtest(self, data, month_offset):
         """
         Returns the most volatile ticker for passed month_offset
         """
         top_volatility = None
+        print("MONTH OFFSET FOR VOL: ", data[month_offset])
         for ticker in self.get_universe():
-            if top_volatility is None or data[ticker][month_offset] > top_volatility[1]:
-                top_volatility = [ticker, data[ticker][month_offset]]
+            if (top_volatility is None or data[month_offset][ticker] > top_volatility[1]) and data[month_offset][ticker] < .15:
+                top_volatility = [ticker, data[month_offset][ticker]]
         return top_volatility[0]
 
     def backfill_data_point(self, focus, data, date, offset, universe_selection=False, new=True):
@@ -584,10 +629,11 @@ class Backtest(Base):
         # print("DATE: ", date.strftime(self.get_backtest_date_modifier()))
 
         # Make Sure There Is Data For The Day
-        if date.strftime(self.get_backtest_date_modifier()) not in data[offset]["hourly"].keys():
-            offset -= 1
-            if offset not in data.keys() or date.strftime(self.get_backtest_date_modifier()) not in data[offset]["hourly"].keys():
-                return
+        if date.strftime(self.get_backtest_date_modifier()) not in data["hourly"].keys():
+            # print("DAY DOES NOT EXIST IN KEYS: ", date.weekday())
+            # offset -= 1
+            # if offset not in data.keys() or date.strftime(self.get_backtest_date_modifier()) not in data[offset]["hourly"].keys():
+            return
 
         hourly_date = date.strftime(self.get_backtest_date_modifier())
         dp_date = date.strftime(self.get_api_date_modifier())
@@ -595,13 +641,12 @@ class Backtest(Base):
         # Update Data Point
         data_point = {
             "ticker": focus,
-            "closing_price": data[offset]["hourly"][hourly_date]["close"],
-            "3day_sma_close": data[offset]["sma_close"][3][dp_date],
-            "3day_sma_low": data[offset]["sma_low"][3][dp_date],
-            "5day_sma_close": data[offset]["sma_close"][5][dp_date],
-            "5day_sma_low": data[offset]["sma_low"][5][dp_date],
-            "date": self.make_backtest_pretty_date(og_date),
-            "trading_day": trading_day
+            "closing_price": data["hourly"][hourly_date]["close"],
+            "3day_sma_close": data["sma_close"][3][dp_date],
+            "3day_sma_low": data["sma_low"][3][dp_date],
+            "5day_sma_close": data["sma_close"][5][dp_date],
+            "5day_sma_low": data["sma_low"][5][dp_date],
+            "date": self.make_backtest_pretty_date(og_date)
         }
 
         # print("DATAPOINT DATE: ", data_point["date"])

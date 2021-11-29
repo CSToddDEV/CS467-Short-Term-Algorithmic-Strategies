@@ -22,9 +22,10 @@ def backfill_db():
     Backfills the Database
     """
     drop_db()
-    t.Backtest(True)
+    test = t.Backtest(True)
     n.Benchmark().benchmark_backfill()
     backtest_algo()
+    print(test.backtest())
 
 
 
@@ -50,7 +51,7 @@ def test_backtest():
     """
     Test Backtest
     """
-    test = t.Backtest()
+    test = t.Backtest(True)
     test.backtest()
     print(test.get_update_status())
 

@@ -45,7 +45,7 @@ class Universe(Base):
                 new_focus = d.Database().get_multiple_backtest_data_dates(self.make_backtest_pretty_date(self.get_datetime_object_from_backtest_date(focus_date)))
                 new_focus = b.Backtest().most_recent_universe(new_focus)
                 if new_focus is None:
-                    focus_date = self.make_backtest_pretty_date((self.get_datetime_object_from_backtest_date(focus_date) - relativedelta(hours=1)))
+                    focus_date = self.make_backtest_pretty_date((self.get_datetime_object_from_backtest_date(focus_date) + relativedelta(hours=1)))
             old_equity = self.get_current_equity()
             new_equity = new_focus["ticker"]
             d.Database().update_current_focus(old_equity, new_equity)
@@ -53,7 +53,7 @@ class Universe(Base):
 
         self._date = self.make_pretty_date(self.get_datetime_object_from_backtest_date(self.get_date()))
 
-        print("DATE: ", self.get_datetime_object_from_date(self._date).day, " EQUITY: ", equity, " FORCE: ", self._force_universe)
+        # print("DATE: ", self.get_datetime_object_from_date(self._date).day, " EQUITY: ", equity, " FORCE: ", self._force_universe)
         # If first of month get new focus
         if (self.get_datetime_object_from_date(self._date).day == 1 and self._daily_check) or (equity is None and self._today is True) or self._force_universe:
             equity = self.get_new_focus()
