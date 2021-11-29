@@ -521,7 +521,6 @@ class Backtest(Base):
 
             for ticker in self.get_universe():
                 universe_selection_data[month_offset][ticker] = a.Data(ticker).volatility_indicator_backtest(self.make_api_pretty_date(universe_selection_date))
-                # print("RANGE: ", month_offset, "TICKER: ", ticker, " VOLATILITY: ", universe_selection_data[month_offset][ticker])
             universe_selection_date += relativedelta(months=1)
 
         # Create universe data dictionary:

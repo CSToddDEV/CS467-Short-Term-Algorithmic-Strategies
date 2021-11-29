@@ -159,7 +159,6 @@ class Universe(Base):
                              a.Data(ticker).volatility_indicator(today)]
             else:
                 volatility = a.Data(ticker).volatility_indicator(today)
-                print("VOLATILITY: ", volatility, " DATE: ", today)
                 if volatility > new_focus[1]:
                     new_focus = [ticker, volatility]
 

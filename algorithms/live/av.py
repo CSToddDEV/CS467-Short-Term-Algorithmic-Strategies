@@ -89,7 +89,6 @@ class Data(Base):
                 # time.sleep(15)
 
         self.set_data("sma_close", sma_close)
-        # print(self.get_data())
 
     def pull_moving_avg_close_backfill(self):
         """

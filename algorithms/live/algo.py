@@ -201,7 +201,6 @@ class Algorithm(Base):
         data = d.Database().get_multiple_backtest_data_dates(self.make_backtest_pretty_date(self.get_datetime_object_from_date(self.get_universe().get_date())))
         data = t.Backtest().most_recent_universe(data)
         if data["ticker"] is None or data["closing_price"] == 0:
-            # print("SKIPPING DATE: ", self.make_backtest_pretty_date(self.get_datetime_object_from_date(self.get_universe().get_date())))
             return
         updated_weight_data = self.translate_portfolio(self.get_current_portfolio())
 
